@@ -1,4 +1,4 @@
-export default interface BoardListInterface {
+export default interface BoardList {
     boardIdx: number;
     title: string;
     content: string;
@@ -9,5 +9,4 @@ export default interface BoardListInterface {
     regDt: string;
     nickname: string;
     profileImage: string | null;
-    email: string;
 }
