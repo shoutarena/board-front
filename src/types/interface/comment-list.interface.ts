@@ -1,4 +1,4 @@
-export default interface CommentListInterface {
+export default interface CommentList {
     nickname: string;
     profileImage: string | null;
     regDt: string;
