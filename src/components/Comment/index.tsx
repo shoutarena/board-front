@@ -1,8 +1,9 @@
 import React from 'react';
 import { CommentList } from 'types/interface';
-import defaultProfileImage from 'assets/image/default-profile-image.webp'
+import defaultProfileImage from 'assets/image/default-profile-image.png'
 import './style.css';
 
+// interface: Comment Component Properties
 interface Props {
     commentList: CommentList;
 }
@@ -12,7 +13,7 @@ interface Props {
  */
 export default function Comment({commentList}: Props) {
 
-    // Properties
+    // State: Properties
     const { nickname, profileImage, content, regDt } = commentList;
 
     // Render : Comment List 렌더링

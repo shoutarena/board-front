@@ -1,9 +1,10 @@
 import React from 'react';
 import './style.css';
-import defaultProfileImage from 'assets/image/default-profile-image.webp';
+import defaultProfileImage from 'assets/image/default-profile-image.png';
 import { BoardList } from 'types/interface';
 import { useNavigate } from 'react-router-dom';
 
+// interface: Top3 Component Properties
 interface Props {
     top3List: BoardList
 }
@@ -13,7 +14,7 @@ interface Props {
  */
 export default function Top3({ top3List }: Props) {
 
-    // Properties
+    // State: Properties
     const { boardIdx, title, content, boardTitleImage } = top3List;
     const { favoriteCount, commentCount, viewCount } = top3List;
     const { regDt, nickname, profileImage } = top3List;

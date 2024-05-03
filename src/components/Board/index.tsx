@@ -2,8 +2,9 @@ import React from 'react';
 import './style.css';
 import { BoardList } from 'types/interface'
 import { useNavigate } from 'react-router-dom';
-import defaultProfileImage from 'assets/image/default-profile-image.webp'
+import defaultProfileImage from 'assets/image/default-profile-image.png'
 
+// interface: Board Component Properties
 interface Props {
     boardList: BoardList
 }
@@ -13,7 +14,7 @@ interface Props {
  */
 export default function Board({boardList} : Props) {
 
-    // properties
+    // State: Properties
     const { boardIdx, title, content, boardTitleImage} = boardList;
     const { favoriteCount, commentCount, viewCount} = boardList;
     const { regDt, nickname, profileImage } = boardList;

@@ -1,9 +1,9 @@
 import React from 'react';
 import './style.css';
-import defaultProfileImage from 'assets/image/default-profile-image.webp';
+import defaultProfileImage from 'assets/image/default-profile-image.png';
 import { FavoriteList } from 'types/interface';
 
-// Props
+// interface: Favorite Component Properties
 interface Props{
     favoriteList: FavoriteList;
 }
@@ -13,7 +13,7 @@ interface Props{
  */
 export default function Favorite({favoriteList}: Props) {
 
-    // Properties
+    // State: Properties
     const {profileImage, nickname, email} = favoriteList;
 
     // Render: Favorite 컴포넌트 render
