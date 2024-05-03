@@ -9,9 +9,7 @@ interface Props {
     top3List: BoardList
 }
 
-/**
- * * Component: Top 3 List Item Component
- */
+// * Component: Top 3 List Item Component
 export default function Top3({ top3List }: Props) {
 
     // * State: Properties
@@ -27,7 +25,7 @@ export default function Top3({ top3List }: Props) {
         // navigator(boardIdx);
     }
 
-    // * Render : Top 3 List Item 컴포넌트 렌더링
+    // * Render: Top 3 List Item Rendering
     return (
        <div className='top-3-list-item' style={{ backgroundImage: `url(${boardTitleImage})`}} onClick={onClickHandler}>
            <div className='top-3-list-item-main-box'>

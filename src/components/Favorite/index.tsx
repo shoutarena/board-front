@@ -8,15 +8,13 @@ interface Props{
     favoriteList: FavoriteList;
 }
 
-/**
- * * Component: Favorite Component
- */
+// * Component: Favorite Component
 export default function Favorite({favoriteList}: Props) {
 
     // * State: Properties
     const {profileImage, nickname, email} = favoriteList;
 
-    // * Render: Favorite 컴포넌트 render
+    // * Render: Favorite Rendering
     return (
        <div className='favorite-list-item'>
             <div className='favorite-list-item-profile-box'>

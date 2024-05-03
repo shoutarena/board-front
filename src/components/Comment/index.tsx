@@ -8,15 +8,13 @@ interface Props {
     commentList: CommentList;
 }
 
-/**
- * * Compponent: Comment List Component
- */
+// * Compponent: Comment List Component
 export default function Comment({commentList}: Props) {
 
     // * State: Properties
     const { nickname, profileImage, content, regDt } = commentList;
 
-    // * Render : Comment List 렌더링
+    // * Render: Comment List Rendering
     return (
        <div className='comment-list-item'>
            <div className='comment-list-item-top'>

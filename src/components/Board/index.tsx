@@ -9,9 +9,7 @@ interface Props {
     boardList: BoardList
 }
 
-/**
- * * component : Board List Compponent
- */
+// * component : Board List Compponent
 export default function Board({boardList} : Props) {
 
     // * * State: Properties
@@ -27,7 +25,7 @@ export default function Board({boardList} : Props) {
         // * navigator(boardIdx);
     }
 
-    // * render: Board List 컴포넌트 렌더링
+    // * Render: Board List Rendering
     return (
         <div className='board-list-item'>
             <div className='board-list-item-main-box'>
