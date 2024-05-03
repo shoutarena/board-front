@@ -1,9 +1,17 @@
-import {AUTH_PATH, MAIN_PATH, SEARCH_PATH, USER_PATH } from 'constant';
+import {
+    AUTH_PATH,
+    BOARD_DETAIL_PATH, BOARD_PATH,
+    BOARD_UPDATE_PATH,
+    BOARD_WRITE_PATH,
+    MAIN_PATH,
+    SEARCH_PATH,
+    USER_PATH
+} from 'constant';
 import React, {useRef, useState, ChangeEvent, KeyboardEvent, useEffect } from 'react';
 import { useCookies } from 'react-cookie';
-import { useNavigate, useParams } from 'react-router-dom';
+import {useLocation, useNavigate, useParams} from 'react-router-dom';
 import './style.css'
-import {useLoginUserStore} from "../../stores";
+import {useBoardStore, useLoginUserStore} from "../../stores";
 import loginUserStore from "../../stores/login-user.store";
 
 // * Component : Header Component
@@ -11,11 +19,35 @@ export default function Header() {
 
     // * State : Login User State
     const { loginUser, setLoginUser, resetLoginUser } = useLoginUserStore();
-
+    // * State : path State
+    const { pathname } = useLocation();
     // * State : Cookie State
     const [cookies, setCookies] = useCookies();
     // * State : Login State
     const [isLogin, setLogin] = useState<boolean>(false);
+
+    const isAuthPage = pathname.startsWith(AUTH_PATH());
+    const isMainPage = pathname === MAIN_PATH();
+    const isSearchPage = pathname.startsWith(SEARCH_PATH(''));
+    const isBoardDetailPage = pathname.startsWith(BOARD_PATH() + '/' + BOARD_DETAIL_PATH(''));
+    const isBoardWritePage = pathname.startsWith(BOARD_PATH() + '/' + BOARD_WRITE_PATH());
+    const isBoardUpdatePage = pathname.startsWith(BOARD_PATH() + '/' + BOARD_UPDATE_PATH(''));
+    const isUserPage = pathname.startsWith(USER_PATH(''));
+
+    // // * State : Auth Page State
+    // const [isAuthPage, setAuthPage] = useState<boolean>(false);
+    // // * State : Main Page State
+    // const [isMainPage, setMainPage] = useState<boolean>(false);
+    // // * State : Search Page State
+    // const [isSearchPage, setSearchPage] = useState<boolean>(false);
+    // // * State : Board Detail Page State
+    // const [isBoardDetailPage, setBoardDetailPage] = useState<boolean>(false);
+    // // * State : Board Write Page State
+    // const [isBoardWritePage, setBoardWritePage] = useState<boolean>(false);
+    // // * State : Board Update Page State
+    // const [isBoardUpdatePage, setBoardUpdatePage] = useState<boolean>(false);
+    // // * State : User Page State
+    // const [isUserPage, setUserPage] = useState<boolean>(false);
 
     // * Function: 네비게이트 함수
     const navigate = useNavigate();
@@ -86,7 +118,7 @@ export default function Header() {
 
     }
 
-    // * Component : Login or Mypage Button Component
+    // * Component : Mypage Button Component
     const MyPageButton = () => {
 
         // * State : user Email path variable State
@@ -132,6 +164,48 @@ export default function Header() {
         );
     }
 
+    // * Component : Upload Button Component
+    const UploadButton = () => {
+
+        // * State : Board State
+        const { title, content, boardImageFileList, resetBoard } = useBoardStore();
+
+        // * Event Handler : Upload Button Click Event Handler
+        const onUploadButtonClickHandler = () => {
+
+        }
+
+        // * Render :  Upload Button Rendering
+        if(title && content){
+            return(
+                <div className='black-button' onClick={onUploadButtonClickHandler}>{`업로드`}</div>
+            )
+        }
+
+        // * Render :  Upload Disabled Button Rendering
+        return(
+            <div className='disable-button'>{`업로드`}</div>
+        )
+    }
+
+    // // * Effect : path modify Effect
+    // useEffect(() => {
+    //     const isAuthPage = pathname.startsWith(AUTH_PATH());
+    //     const isMainPage = pathname === MAIN_PATH();
+    //     const isSearchPage = pathname.startsWith(SEARCH_PATH(''));
+    //     const isBoardDetailPage = pathname.startsWith(BOARD_PATH() + '/' + BOARD_DETAIL_PATH(''));
+    //     const isBoardWritePage = pathname.startsWith(BOARD_PATH() + '/' + BOARD_WRITE_PATH());
+    //     const isBoardUpdatePage = pathname.startsWith(BOARD_PATH() + '/' + BOARD_UPDATE_PATH(''));
+    //     const isUserPage = pathname.startsWith(USER_PATH(''));
+    //     setAuthPage(isAuthPage);
+    //     setMainPage(isMainPage);
+    //     setSearchPage(isSearchPage);
+    //     setBoardDetailPage(isBoardDetailPage);
+    //     setBoardWritePage(isBoardWritePage);
+    //     setBoardUpdatePage(isBoardUpdatePage);
+    //     setUserPage(isUserPage);
+    // }, [pathname]);
+
     // * Render : Header Rendering
     return (
        <div id='header'>
@@ -143,8 +217,9 @@ export default function Header() {
                    <div className='header-logo'>{`Kei's Board`}</div>
                </div>
                <div className='header-right-box'>
-                   <SearchButton />
-                   <MyPageButton />
+                   { ( isAuthPage || isMainPage || isSearchPage || isBoardDetailPage ) && <SearchButton /> }
+                   { ( isMainPage || isSearchPage || isBoardDetailPage || isUserPage ) && <MyPageButton /> }
+                   { ( isBoardWritePage || isBoardUpdatePage) && <UploadButton /> }
                </div>
            </div>
        </div>

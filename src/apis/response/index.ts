@@ -1,2 +1,2 @@
-import ResponseDto from "apis/response/Response.dto";
+import ResponseDto from "./response.dto";
 export type { ResponseDto };
