@@ -3,20 +3,20 @@ import { CommentList } from 'types/interface';
 import defaultProfileImage from 'assets/image/default-profile-image.png'
 import './style.css';
 
-// interface: Comment Component Properties
+// * interface: Comment Component Properties
 interface Props {
     commentList: CommentList;
 }
 
 /**
- * Compponent: Comment List 컴포넌트
+ * * Compponent: Comment List Component
  */
 export default function Comment({commentList}: Props) {
 
-    // State: Properties
+    // * State: Properties
     const { nickname, profileImage, content, regDt } = commentList;
 
-    // Render : Comment List 렌더링
+    // * Render : Comment List 렌더링
     return (
        <div className='comment-list-item'>
            <div className='comment-list-item-top'>

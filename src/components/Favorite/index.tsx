@@ -3,20 +3,20 @@ import './style.css';
 import defaultProfileImage from 'assets/image/default-profile-image.png';
 import { FavoriteList } from 'types/interface';
 
-// interface: Favorite Component Properties
+// * interface: Favorite Component Properties
 interface Props{
     favoriteList: FavoriteList;
 }
 
 /**
- * Component: Favorite 컴포넌트
+ * * Component: Favorite Component
  */
 export default function Favorite({favoriteList}: Props) {
 
-    // State: Properties
+    // * State: Properties
     const {profileImage, nickname, email} = favoriteList;
 
-    // Render: Favorite 컴포넌트 render
+    // * Render: Favorite 컴포넌트 render
     return (
        <div className='favorite-list-item'>
             <div className='favorite-list-item-profile-box'>

@@ -16,26 +16,27 @@ interface Props {
 }
 
 /**
- * Component: Input Box Component
+ * * Component: Input Box Component
  */
 const InputBox = forwardRef<HTMLInputElement, Props>((props: Props, ref) => {
 
-    // State: Properties
+    // * State: Properties
     const { label, type, error, placeholder, value, icon, message } = props;
     const { setValue, onButtonClick, onKeyDown } = props;
-    // Event Handler: input 값 변경 이벤트 핸들러
+    
+    // * Event Handler: input 값 변경 이벤트 핸들러
     const onChangeHandler = (event: ChangeEvent<HTMLInputElement>) => {
         const { value } = event.target;
         setValue(value);
     }
 
-    // Event Handler: input 키 이벤트 핸들러
+    // * Event Handler: input 키 이벤트 핸들러
     const onKeyDownHandler = (event: KeyboardEvent<HTMLInputElement>) => {
         if(!onKeyDown) return;
         onKeyDown(event);
     }
 
-    // Render: Input Box Component Render
+    // * Render: Input Box Component Render
     return (
         <div className='inputbox'>
             <div className='inputbox-label'>{label}</div>

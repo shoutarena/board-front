@@ -4,30 +4,30 @@ import { BoardList } from 'types/interface'
 import { useNavigate } from 'react-router-dom';
 import defaultProfileImage from 'assets/image/default-profile-image.png'
 
-// interface: Board Component Properties
+// * interface: Board Component Properties
 interface Props {
     boardList: BoardList
 }
 
 /**
- * component : Board List 컴포넌트
+ * * component : Board List Compponent
  */
 export default function Board({boardList} : Props) {
 
-    // State: Properties
+    // * * State: Properties
     const { boardIdx, title, content, boardTitleImage} = boardList;
     const { favoriteCount, commentCount, viewCount} = boardList;
     const { regDt, nickname, profileImage } = boardList;
 
-    // function: 네비게이트 함수
-    // const navigator = useNavigate();
+    // * function: 네비게이트 함수
+    // * const navigator = useNavigate();
 
-    // event handler: 게시물 아이템 클릭 이벤트
+    // * event handler: 게시물 아이템 클릭 이벤트
     const onClickHandler = () => {
-        // navigator(boardIdx);
+        // * navigator(boardIdx);
     }
 
-    // render: Board List 컴포넌트 렌더링
+    // * render: Board List 컴포넌트 렌더링
     return (
         <div className='board-list-item'>
             <div className='board-list-item-main-box'>

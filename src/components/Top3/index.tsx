@@ -4,30 +4,30 @@ import defaultProfileImage from 'assets/image/default-profile-image.png';
 import { BoardList } from 'types/interface';
 import { useNavigate } from 'react-router-dom';
 
-// interface: Top3 Component Properties
+// * interface: Top3 Component Properties
 interface Props {
     top3List: BoardList
 }
 
 /**
- * Component: Top 3 List Item 컴포넌트
+ * * Component: Top 3 List Item Component
  */
 export default function Top3({ top3List }: Props) {
 
-    // State: Properties
+    // * State: Properties
     const { boardIdx, title, content, boardTitleImage } = top3List;
     const { favoriteCount, commentCount, viewCount } = top3List;
     const { regDt, nickname, profileImage } = top3List;
 
-    // Function: 네비게이트 함수
+    // * Function: 네비게이트 함수
     // const navigator = useNavigate();
 
-    // Event Handler : 게시물 아이템 클릭 이벤트 처리 함수
+    // * Event Handler : 게시물 아이템 클릭 이벤트 처리 함수
     const onClickHandler = () => {
         // navigator(boardIdx);
     }
 
-    // Render : Top 3 List Item 컴포넌트 렌더링
+    // * Render : Top 3 List Item 컴포넌트 렌더링
     return (
        <div className='top-3-list-item' style={{ backgroundImage: `url(${boardTitleImage})`}} onClick={onClickHandler}>
            <div className='top-3-list-item-main-box'>
