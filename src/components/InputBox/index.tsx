@@ -1,4 +1,4 @@
-import {ChangeEvent, Dispatch, forwardRef, SetStateAction, KeyboardEvent } from 'react';
+import {ChangeEvent, forwardRef, KeyboardEvent } from 'react';
 import './style.css'
 
 // interface: Input Box Component Properties
@@ -8,7 +8,7 @@ interface Props {
     error: boolean;
     placeholder: string;
     value: string;
-    setValue: Dispatch<SetStateAction<string>>
+    onChange: (event: ChangeEvent<HTMLInputElement>) => void;
     icon?: 'eye-light-off-icon' | 'eye-light-on-icon' | 'expand-right-light-icon';
     onButtonClick?: () => void;
     message?: string;
@@ -20,13 +20,13 @@ const InputBox = forwardRef<HTMLInputElement, Props>((props: Props, ref) => {
 
     // * State: Properties
     const { label, type, error, placeholder, value, icon, message } = props;
-    const { setValue, onButtonClick, onKeyDown } = props;
+    const { onChange, onButtonClick, onKeyDown } = props;
     
     // * Event Handler: input 값 변경 이벤트 핸들러
-    const onChangeHandler = (event: ChangeEvent<HTMLInputElement>) => {
-        const { value } = event.target;
-        setValue(value);
-    }
+    // const onChangeHandler = (event: ChangeEvent<HTMLInputElement>) => {
+    //     const { value } = event.target;
+    //     onChange(value);
+    // }
 
     // * Event Handler: input 키 이벤트 핸들러
     const onKeyDownHandler = (event: KeyboardEvent<HTMLInputElement>) => {
@@ -39,7 +39,7 @@ const InputBox = forwardRef<HTMLInputElement, Props>((props: Props, ref) => {
         <div className='inputbox'>
             <div className='inputbox-label'>{label}</div>
             <div className={error ? 'inputbox-container-error' : 'inputbox-container'}>
-                <input ref={ref} className='input' type={type} placeholder={placeholder} value={value} onChange={onChangeHandler} onKeyDown={onKeyDownHandler} />
+                <input ref={ref} className='input' type={type} placeholder={placeholder} value={value} onChange={onChange} onKeyDown={onKeyDownHandler} />
                 {onButtonClick !== undefined && (
                     <div className='icon-button' onClick={onButtonClick}>
                         { icon !== undefined && <div className={`icon ${icon}`}></div> }
