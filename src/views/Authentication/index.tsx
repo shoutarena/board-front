@@ -23,9 +23,9 @@ export default function Authentication() {
     // * Component : Sign In Card Component
     const SignInCard = () => {
 
-        // * State : email refer state
+        // * Ref State : email refer state
         const emailRef = useRef<HTMLInputElement | null>(null);
-        // * State : password state
+        // * Ref State : password state
         const passwordRef = useRef<HTMLInputElement | null>(null);
         // * State : email state
         const [email, setEmail] = useState<string>('');
@@ -140,9 +140,295 @@ export default function Authentication() {
     // * Component : Sign Up Card Component
     const SignUpCard = () => {
 
+        // * Ref State : email refer state
+        const emailRef = useRef<HTMLInputElement>(null);
+        // * Ref State : password refer state
+        const passwordRef = useRef<HTMLInputElement>(null);
+        // * Ref State : password check refer state
+        const passwordCheckRef = useRef<HTMLInputElement>(null);
+
+        // * Ref State : nickname refer state
+        const nicknameRef = useRef<HTMLInputElement>(null);
+        // * Ref State : tel number check refer state
+        const telNumberRef = useRef<HTMLInputElement>(null);
+        // * Ref State : address check refer state
+        const addressRef = useRef<HTMLInputElement>(null);
+        // * Ref State : address detail check refer state
+        const addressDetailRef = useRef<HTMLInputElement>(null);
+
+        // * State : Page Number State
+        const [page, setPage] = useState<1 | 2>(2);
+        // * State : email state
+        const [email, setEmail] = useState<string>('');
+        // * State : password state
+        const [password, setPassword] = useState<string>('');
+        // * State : password check state
+        const [passwordCheck, setPasswordCheck] = useState<string>('');
+        // * State : password Type state
+        const [passwordType, setPasswordType] = useState<'text' | 'password'>('password');
+        // * State : password checkType state
+        const [passwordCheckType, setPasswordCheckType] = useState<'text' | 'password'>('password');
+        // * State : email error state
+        const [isEmailError, setEmailError] = useState<boolean>(false);
+        // * State : password error state
+        const [isPasswordError, setPasswordError] = useState<boolean>(false);
+        // * State : password check error state
+        const [isPasswordCheckError, setPasswordCheckError] = useState<boolean>(false);
+        // * State : email error message state
+        const [emailErrorMessage, setEmailErrorMessage] = useState<string>('');
+        // * State : password error message state
+        const [passwordErrorMessage, setPasswordErrorMessage] = useState<string>('');
+        // * State : password check error message state
+        const [passwordCheckErrorMessage, setPasswordCheckErrorMessage] = useState<string>('');
+
+        // * State : nickname error state
+        const [isNicknameError, setNicknameError] = useState<boolean>(false);
+        // * State : tel number message state
+        const [isTelNumberError, setTelNumberError] = useState<boolean>(false);
+        // * State : address error state
+        const [isAddressError, setAddressError] = useState<boolean>(false);
+        // * State : nickname error message state
+        const [nicknameErrorMessage, setNicknameErrorMessage] = useState<string>('');
+        // * State : tel number error message state
+        const [telNumberErrorMessage, setTelNumberErrorMessage] = useState<string>('');
+        // * State : address error message state
+        const [addressErrorMessage, setAddressErrorMessage] = useState<string>('');
+
+
+        // * State : password button icon state
+        const [passwordButtonIcon, setPasswordButtonIcon] = useState<'eye-light-off-icon' | 'eye-light-on-icon'>('eye-light-off-icon');
+        // * State : password check button icon state
+        const [passwordCheckButtonIcon, setPasswordCheckButtonIcon] = useState<'eye-light-off-icon' | 'eye-light-on-icon'>('eye-light-off-icon');
+
+        // * State : nickname state
+        const [nickname, setNickname] = useState<string>('');
+        // * State : tel number state
+        const [telNumber,setTelNumber] = useState<string>('');
+        // * State : address state
+        const [address, setAddress] = useState<string>('');
+        // * State : address detail state
+        const [addressDetail, setAddressDetail] = useState<string>('');
+
+        // * Event Handler : email modify Event Handler
+        const onEmailChangeHandler = (event:ChangeEvent<HTMLInputElement>) => {
+            const { value } = event.target;
+            setEmail(value);
+        }
+        // * Event Handler : password modify Event Handler
+        const onPasswordChangeHandler = (event:ChangeEvent<HTMLInputElement>) => {
+            const { value } = event.target;
+            setPassword(value);
+        }
+        // * Event Handler : passwordCheck modify Event Handler
+        const onPasswordCheckChangeHandler = (event:ChangeEvent<HTMLInputElement>) => {
+            const { value } = event.target;
+            setPasswordCheck(value);
+        }
+        // * Event Handler : password button Event Handler
+        const onPasswordButtonClickHandler = () => {
+            if(passwordButtonIcon === 'eye-light-off-icon'){
+                setPasswordButtonIcon('eye-light-on-icon');
+                setPasswordType('text');
+            }else{
+                setPasswordButtonIcon('eye-light-off-icon');
+                setPasswordType('password');
+            }
+        }
+        // * Event Handler : password check button Event Handler
+        const onPasswordCheckButtonClickHandler = () => {
+            if(passwordButtonIcon === 'eye-light-off-icon'){
+                setPasswordCheckButtonIcon('eye-light-on-icon');
+                setPasswordCheckType('text');
+            }else{
+                setPasswordCheckButtonIcon('eye-light-off-icon');
+                setPasswordCheckType('password');
+            }
+        }
+        // * event handler : email key down event handler
+        const onEmailKeyDownHandler = (event: KeyboardEvent<HTMLInputElement>) => {
+            if(event.key !== 'Enter') return;
+            if(!passwordRef.current) return;
+            passwordRef.current.focus();
+        }
+        // * event handler : password key down event handler
+        const onPasswordKeyDownHandler = (event: KeyboardEvent<HTMLInputElement>) => {
+            if(event.key !== 'Enter') return;
+            if(!passwordCheckRef.current) return;
+            passwordCheckRef.current.focus();
+        }
+        // * event handler : password check key down event handler
+        const onPasswordCheckKeyDownHandler = (event: KeyboardEvent<HTMLInputElement>) => {
+            if(event.key !== 'Enter') return;
+            onNextButtonClickHandler();
+        }
+        // * event handler : next button click evnet handler
+        const onNextButtonClickHandler = () => {
+            const emailPattern = /^[a-zA-Z0-9]*@([-.]?[a-zA-Z0-9])*\.[a-zA-Z]{2,4}$/
+            const isEmailPattern = emailPattern.test(email);
+            if(!isEmailPattern){
+                setEmailError(true);
+                setEmailErrorMessage('이메일 주소 포맷이 맞지 않습니다.');
+            }
+            const isCheckedPassword = password.trim().length >= 8;
+            if(!isCheckedPassword){
+                setPasswordError(true);
+                setPasswordErrorMessage('비밀번호는 8자 이상 입력해주세요.');
+            }
+            const isEqualPassword = password === passwordCheck;
+            if(!isEqualPassword){
+                setPasswordCheckError(true);
+                setPasswordCheckErrorMessage('비밀번호가 일치하지 않습니다.');
+            }
+
+            if(!isEmailPattern || !isCheckedPassword || !isEqualPassword) return;
+
+            setPage(2);
+        }
+
+        // * event handler : nickname change event handler
+        const onNicknameChangeHandler = (event: ChangeEvent<HTMLInputElement>) => {
+            const { value } = event.target;
+            setNickname(value);
+        }
+        // * event handler : tel number change event handler
+        const onTelNumberChangeHandler = (event: ChangeEvent<HTMLInputElement>) => {
+            const { value } = event.target;
+            setTelNumber(value);
+        }
+        // * event handler : address change event handler
+        const onAddressChangeHandler = (event: ChangeEvent<HTMLInputElement>) => {
+            const { value } = event.target;
+            setAddress(value);
+        }
+        // * event handler : address detail change event handler
+        const onAddressDetailChangeHandler = (event: ChangeEvent<HTMLInputElement>) => {
+            const { value } = event.target;
+            setAddressDetail(value);
+        }
+        // * event handler : login link click event handler
+        const onLoginLinkClickHandler = () => {
+            setView('sign-in');
+        }
+        // * event handler : address button click event handler
+        const onAddressButtonClickHandler = () => {
+
+        }
+        // * event handler : nickname key down event handler
+        const onNickKeyDownHandler = (event: KeyboardEvent<HTMLInputElement>) => {
+            if(event.key !== 'Enter') return;
+            if(!telNumberRef.current) return;
+            telNumberRef.current.focus()
+        }
+        // * event handler : tel number key down event handler
+        const onTelNumberKeyDownHandler = (event: KeyboardEvent<HTMLInputElement>) => {
+            if(event.key !== 'Enter') return;
+            if(!addressRef.current) return;
+            addressRef.current.focus()
+        }
+        // * event handler : address key down event handler
+        const onAddressKeyDownHandler = (event: KeyboardEvent<HTMLInputElement>) => {
+            if(event.key !== 'Enter') return;
+            if(!addressDetailRef.current) return;
+            addressDetailRef.current.focus()
+        }
+        // * event handler : address Detail key down event handler
+        const onAddressDetailKeyDownHandler = (event: KeyboardEvent<HTMLInputElement>) => {
+            if(event.key !== 'Enter') return;
+            onSignUpButtonClickHandler();
+        }
+
+        // * event handler : sign up button click event handler
+        const onSignUpButtonClickHandler = () => {
+
+            if(!nickname){
+                setNicknameError(true);
+                setNicknameErrorMessage('비밀번호가 일치하지 않습니다.');
+            }
+            if(!telNumber){
+                setTelNumberError(true);
+                setTelNumberErrorMessage('');
+            }
+            if(!address){
+                setAddressError(true);
+                setAddressErrorMessage('');
+            }
+            if(!nickname || !telNumber || !address) return;
+
+        }
+
         // * Render: Sign Up card Rendering
         return (
-            <div className='auth-card'></div>
+            <div className='auth-card'>
+                <div className='auth-card-box'>
+                    <div className='auth-card-top'>
+                        <div className='auth-card-title-box'>
+                            <div className='auth-card-title'>{`회원가입`}</div>
+                            <div className='auth-card-page'>{`${page}/2`}</div>
+                        </div>
+                        {page === 1 && (
+                            <>
+                                <InputBox ref={emailRef} label='이메일 주소*' type='text' error={isEmailError}
+                                          placeholder='이메일 주소를 입력해주세요.' value={email}
+                                          onChange={onEmailChangeHandler}
+                                          message={emailErrorMessage}
+                                          onKeyDown={onEmailKeyDownHandler}/>
+                                <InputBox ref={passwordRef} label='비밀번호*' type={passwordType} error={isPasswordError}
+                                          placeholder='비밀번호를 입력해 주세요.' value={password}
+                                          onChange={onPasswordChangeHandler}
+                                          message={passwordErrorMessage} icon={passwordButtonIcon}
+                                          onButtonClick={onPasswordButtonClickHandler}
+                                          onKeyDown={onPasswordKeyDownHandler} />
+                                <InputBox ref={passwordCheckRef} label='비밀번호 확인*' type={passwordCheckType} error={isPasswordCheckError}
+                                          placeholder='비밀번호를 다시 입력해주세요.' value={passwordCheck}
+                                          onChange={onPasswordCheckChangeHandler} message={passwordCheckErrorMessage} icon={passwordCheckButtonIcon}
+                                          onButtonClick={onPasswordCheckButtonClickHandler}
+                                          onKeyDown={onPasswordCheckKeyDownHandler} />
+                            </>
+                        )}
+                        {page === 2 && (
+                            <>
+                                <InputBox ref={nicknameRef} label='닉네임*' type='text' error={isNicknameError}
+                                          placeholder='닉네임을 입력해주세요.' value={nickname}
+                                          onChange={onNicknameChangeHandler}
+                                          message={nicknameErrorMessage}
+                                          onKeyDown={onNickKeyDownHandler} />
+                                <InputBox ref={telNumberRef} label='휴대 폰번호*' type='text' error={isTelNumberError}
+                                          placeholder='핸드폰 번호를 입력해주세요.' value={telNumber}
+                                          onChange={onTelNumberChangeHandler}
+                                          message={telNumberErrorMessage}
+                                          onKeyDown={onTelNumberKeyDownHandler} />
+                                <InputBox ref={addressRef} label='주소*' type='text' error={isAddressError}
+                                          placeholder='우편번호 찾기' value={address} onChange={onAddressChangeHandler}
+                                          message={addressErrorMessage} icon='expand-right-light-icon' onButtonClick={onAddressButtonClickHandler}
+                                          onKeyDown={onAddressKeyDownHandler}/>
+                                <InputBox ref={addressDetailRef} label='상세 주소' type='text' error={false}
+                                          placeholder='상세 주소를 입력해주세요.' value={addressDetail} onChange={onAddressDetailChangeHandler}
+                                          onKeyDown={onAddressDetailKeyDownHandler}/>
+                            </>
+                        )}
+                    </div>
+                    <div className='auth-card-bottom'>
+                        {page === 1 && (
+                            <div className='black-large-full-button' onClick={onNextButtonClickHandler}>{`다음 단계`}</div>
+                        )}
+                        {page === 2 && (
+                            <>
+                                <div className='auth-consent-box'>
+                                    <div className='auth-check-box'>
+                                        <div className='check-ring-light-icon'></div>
+                                    </div>
+                                    <div className='auth-consent-title'>{`개인정보동의`}</div>
+                                    <div className='auth-consent-link'>{`더보기 >`}</div>
+                                </div>
+                                <div className='black-large-full-button' onClick={onSignUpButtonClickHandler}>{`회원가입`}</div>
+                            </>
+                        )}
+                        <div className='auth-description-box'>
+                            <div className='auth-description'>{`이미 계정이 있으신가요? `}<span className='auth-description-link' onClick={onLoginLinkClickHandler}>{`로그인`}</span></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         )
     }
 
