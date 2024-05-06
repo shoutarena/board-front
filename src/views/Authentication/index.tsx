@@ -2,12 +2,13 @@ import React, {useState, KeyboardEvent, useRef, ChangeEvent} from 'react';
 import './style.css'
 import InputBox from "../../components/InputBox";
 import {useNavigate} from "react-router-dom";
-import {AUTH_PATH, MAIN_PATH} from "../../constant";
+import {MAIN_PATH} from "../../constant";
 import {SignInRequestDto} from "../../apis/request/auth";
 import {signInRequest} from "../../apis";
 import {SignInResponseDto} from "../../apis/response/auth";
 import ResponseDto from 'apis/response/response.dto';
 import {useCookies} from "react-cookie";
+import {Address, useDaumPostcodePopup} from "react-daum-postcode";
 
 // * Component : Authentication Display Component
 export default function Authentication() {
@@ -92,6 +93,7 @@ export default function Authentication() {
                 setPasswordButtonIcon('eye-light-on-icon');
             }
         }
+
         // * EventHandler : email input key down event handler
         const onEmailKeyDownHandler = (event: KeyboardEvent<HTMLInputElement>) => {
             if(event.key !== 'Enter') return;
@@ -209,20 +211,34 @@ export default function Authentication() {
         // * State : address detail state
         const [addressDetail, setAddressDetail] = useState<string>('');
 
+        // * State : agreed personal state
+        const [isAgreedPersonal, setAgreedPersonal] = useState<boolean>(false);
+        // * State : agreed personal error state
+        const [isAgreedPersonalError, setAgreedPersonalError] = useState<boolean>(false);
+
+        // * Function : daum post search popup open function
+        const postOpen = useDaumPostcodePopup();
+
         // * Event Handler : email modify Event Handler
         const onEmailChangeHandler = (event:ChangeEvent<HTMLInputElement>) => {
             const { value } = event.target;
             setEmail(value);
+            setEmailError(false);
+            setEmailErrorMessage('');
         }
         // * Event Handler : password modify Event Handler
         const onPasswordChangeHandler = (event:ChangeEvent<HTMLInputElement>) => {
             const { value } = event.target;
             setPassword(value);
+            setPasswordError(false);
+            setPasswordErrorMessage('');
         }
         // * Event Handler : passwordCheck modify Event Handler
         const onPasswordCheckChangeHandler = (event:ChangeEvent<HTMLInputElement>) => {
             const { value } = event.target;
             setPasswordCheck(value);
+            setPasswordCheckError(false);
+            setPasswordCheckErrorMessage('');
         }
         // * Event Handler : password button Event Handler
         const onPasswordButtonClickHandler = () => {
@@ -259,7 +275,9 @@ export default function Authentication() {
         // * event handler : password check key down event handler
         const onPasswordCheckKeyDownHandler = (event: KeyboardEvent<HTMLInputElement>) => {
             if(event.key !== 'Enter') return;
+            if(!nicknameRef.current) return;
             onNextButtonClickHandler();
+            nicknameRef.current.focus();
         }
         // * event handler : next button click evnet handler
         const onNextButtonClickHandler = () => {
@@ -289,21 +307,32 @@ export default function Authentication() {
         const onNicknameChangeHandler = (event: ChangeEvent<HTMLInputElement>) => {
             const { value } = event.target;
             setNickname(value);
+            setNicknameError(false);
+            setNicknameErrorMessage('');
         }
         // * event handler : tel number change event handler
         const onTelNumberChangeHandler = (event: ChangeEvent<HTMLInputElement>) => {
             const { value } = event.target;
             setTelNumber(value);
+            setTelNumberError(false);
+            setTelNumberErrorMessage('');
         }
         // * event handler : address change event handler
         const onAddressChangeHandler = (event: ChangeEvent<HTMLInputElement>) => {
             const { value } = event.target;
             setAddress(value);
+            setAddressError(false);
+            setAddressErrorMessage('');
         }
         // * event handler : address detail change event handler
         const onAddressDetailChangeHandler = (event: ChangeEvent<HTMLInputElement>) => {
             const { value } = event.target;
             setAddressDetail(value);
+        }
+        // * event handler : agreed personal check box event handler
+        const onAgreedPersonalClickHandler = () => {
+            setAgreedPersonal(!setAgreedPersonal);
+            setAgreedPersonalError(false);
         }
         // * event handler : login link click event handler
         const onLoginLinkClickHandler = () => {
@@ -311,10 +340,20 @@ export default function Authentication() {
         }
         // * event handler : address button click event handler
         const onAddressButtonClickHandler = () => {
+            postOpen({ onComplete : onPostComplete });
+        }
+        // * event handler : daum post search complete event handler
+        const onPostComplete = (data: Address) => {
+            const { address } = data;
+            setAddress(address);
+            if(!addressDetailRef.current) return;
+            addressDetailRef.current.focus();
 
         }
+
+
         // * event handler : nickname key down event handler
-        const onNickKeyDownHandler = (event: KeyboardEvent<HTMLInputElement>) => {
+        const onNicknameKeyDownHandler = (event: KeyboardEvent<HTMLInputElement>) => {
             if(event.key !== 'Enter') return;
             if(!telNumberRef.current) return;
             telNumberRef.current.focus()
@@ -322,8 +361,7 @@ export default function Authentication() {
         // * event handler : tel number key down event handler
         const onTelNumberKeyDownHandler = (event: KeyboardEvent<HTMLInputElement>) => {
             if(event.key !== 'Enter') return;
-            if(!addressRef.current) return;
-            addressRef.current.focus()
+            onAddressButtonClickHandler();
         }
         // * event handler : address key down event handler
         const onAddressKeyDownHandler = (event: KeyboardEvent<HTMLInputElement>) => {
@@ -340,6 +378,7 @@ export default function Authentication() {
         // * event handler : sign up button click event handler
         const onSignUpButtonClickHandler = () => {
 
+            alert('회원가입');
             if(!nickname){
                 setNicknameError(true);
                 setNicknameErrorMessage('비밀번호가 일치하지 않습니다.');
@@ -391,7 +430,7 @@ export default function Authentication() {
                                           placeholder='닉네임을 입력해주세요.' value={nickname}
                                           onChange={onNicknameChangeHandler}
                                           message={nicknameErrorMessage}
-                                          onKeyDown={onNickKeyDownHandler} />
+                                          onKeyDown={onNicknameKeyDownHandler} />
                                 <InputBox ref={telNumberRef} label='휴대 폰번호*' type='text' error={isTelNumberError}
                                           placeholder='핸드폰 번호를 입력해주세요.' value={telNumber}
                                           onChange={onTelNumberChangeHandler}
@@ -414,10 +453,10 @@ export default function Authentication() {
                         {page === 2 && (
                             <>
                                 <div className='auth-consent-box'>
-                                    <div className='auth-check-box'>
-                                        <div className='check-ring-light-icon'></div>
+                                    <div className='auth-check-box' onClick={onAgreedPersonalClickHandler}>
+                                        <div className={`icon ${isAgreedPersonal ? 'check-round-fill-icon' : 'check-ring-light-icon'}`}></div>
                                     </div>
-                                    <div className='auth-consent-title'>{`개인정보동의`}</div>
+                                    <div className={isAgreedPersonalError ? 'auth-consent-title-error' : 'auth-consent-title' }>{'개인정보동의'}</div>
                                     <div className='auth-consent-link'>{`더보기 >`}</div>
                                 </div>
                                 <div className='black-large-full-button' onClick={onSignUpButtonClickHandler}>{`회원가입`}</div>
