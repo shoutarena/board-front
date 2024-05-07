@@ -3,9 +3,9 @@ import './style.css'
 import InputBox from "../../components/InputBox";
 import {useNavigate} from "react-router-dom";
 import {MAIN_PATH} from "../../constant";
-import {SignInRequestDto} from "../../apis/request/auth";
-import {signInRequest} from "../../apis";
-import {SignInResponseDto} from "../../apis/response/auth";
+import {SignInRequestDto, SignUpRequestDto} from "../../apis/request/auth";
+import {signInRequest, signUpRequest} from "../../apis";
+import {SignInResponseDto, SignUpResponseDto} from "../../apis/response/auth";
 import ResponseDto from 'apis/response/response.dto';
 import {useCookies} from "react-cookie";
 import {Address, useDaumPostcodePopup} from "react-daum-postcode";
@@ -159,7 +159,7 @@ export default function Authentication() {
         const addressDetailRef = useRef<HTMLInputElement>(null);
 
         // * State : Page Number State
-        const [page, setPage] = useState<1 | 2>(2);
+        const [page, setPage] = useState<1 | 2>(1);
         // * State : email state
         const [email, setEmail] = useState<string>('');
         // * State : password state
@@ -212,12 +212,46 @@ export default function Authentication() {
         const [addressDetail, setAddressDetail] = useState<string>('');
 
         // * State : agreed personal state
-        const [isAgreedPersonal, setAgreedPersonal] = useState<boolean>(false);
+        const [agreedPersonal, setAgreedPersonal] = useState<boolean>(false);
         // * State : agreed personal error state
         const [isAgreedPersonalError, setAgreedPersonalError] = useState<boolean>(false);
 
         // * Function : daum post search popup open function
         const postOpen = useDaumPostcodePopup();
+        // * Function : sign up response process function
+        const signUpResponse = (responseBody: SignUpResponseDto | ResponseDto | null) => {
+            if(!responseBody) {
+                alert('네트워크 이상입니다.')
+                return;
+            }
+
+            const { code } = responseBody;
+            switch(code){
+                case 'DE':
+                    setEmailError(true);
+                    setEmailErrorMessage('중복되는 이메일 주소입니다.');
+                    break;
+                case 'DN':
+                    setNicknameError(true);
+                    setNicknameErrorMessage('중복되는 닉네임 입니다.')
+                    break;
+                case 'DT':
+                    setTelNumberError(true);
+                    setTelNumberErrorMessage('중복되는 핸드폰 번호입니다.');
+                    break;
+                case 'VF':
+                    alert('모든 값을 입력하세요.');
+                    break;
+                case 'DBE':
+                    alert('데이터 베이스 오류입니다.');
+                    break;
+                default:
+                    break;
+            }
+            if(code !== 'SU') return;
+
+            setView('sign-in');
+        }
 
         // * Event Handler : email modify Event Handler
         const onEmailChangeHandler = (event:ChangeEvent<HTMLInputElement>) => {
@@ -281,24 +315,7 @@ export default function Authentication() {
         }
         // * event handler : next button click evnet handler
         const onNextButtonClickHandler = () => {
-            const emailPattern = /^[a-zA-Z0-9]*@([-.]?[a-zA-Z0-9])*\.[a-zA-Z]{2,4}$/
-            const isEmailPattern = emailPattern.test(email);
-            if(!isEmailPattern){
-                setEmailError(true);
-                setEmailErrorMessage('이메일 주소 포맷이 맞지 않습니다.');
-            }
-            const isCheckedPassword = password.trim().length >= 8;
-            if(!isCheckedPassword){
-                setPasswordError(true);
-                setPasswordErrorMessage('비밀번호는 8자 이상 입력해주세요.');
-            }
-            const isEqualPassword = password === passwordCheck;
-            if(!isEqualPassword){
-                setPasswordCheckError(true);
-                setPasswordCheckErrorMessage('비밀번호가 일치하지 않습니다.');
-            }
-
-            if(!isEmailPattern || !isCheckedPassword || !isEqualPassword) return;
+            signUp1PhaseValidation();
 
             setPage(2);
         }
@@ -331,7 +348,7 @@ export default function Authentication() {
         }
         // * event handler : agreed personal check box event handler
         const onAgreedPersonalClickHandler = () => {
-            setAgreedPersonal(!setAgreedPersonal);
+            setAgreedPersonal(!agreedPersonal);
             setAgreedPersonalError(false);
         }
         // * event handler : login link click event handler
@@ -350,7 +367,6 @@ export default function Authentication() {
             addressDetailRef.current.focus();
 
         }
-
 
         // * event handler : nickname key down event handler
         const onNicknameKeyDownHandler = (event: KeyboardEvent<HTMLInputElement>) => {
@@ -378,21 +394,56 @@ export default function Authentication() {
         // * event handler : sign up button click event handler
         const onSignUpButtonClickHandler = () => {
 
-            alert('회원가입');
-            if(!nickname){
-                setNicknameError(true);
-                setNicknameErrorMessage('비밀번호가 일치하지 않습니다.');
-            }
-            if(!telNumber){
-                setTelNumberError(true);
-                setTelNumberErrorMessage('');
-            }
-            if(!address){
-                setAddressError(true);
-                setAddressErrorMessage('');
-            }
-            if(!nickname || !telNumber || !address) return;
+            signUp1PhaseValidation();
 
+            const hasNickname = nickname.trim().length > 0;
+            if(!hasNickname){
+                setNicknameError(true);
+                setNicknameErrorMessage('닉네임을 입력해주세요.');
+            }
+            const telNumberPattern = /^[0-9]{11,13}$/;
+            const isTelNumberPattern = telNumberPattern.test(telNumber);
+            if(!isTelNumberPattern){
+                setTelNumberError(true);
+                setTelNumberErrorMessage('숫자만 입력해주세요.');
+            }
+            const hasAddress = address.trim().length > 0;
+            if(!hasAddress){
+                setAddressError(true);
+                setAddressErrorMessage('주소를 선택해주세요.');
+            }
+            if(!agreedPersonal) setAgreedPersonalError(true);
+
+            if(!hasNickname || !isTelNumberPattern || !hasAddress || !agreedPersonal) return;
+
+            const requestBody: SignUpRequestDto = {
+                email, password, nickname, telNumber, address, addressDetail, agreedPersonal
+            };
+
+            signUpRequest(requestBody).then(signUpResponse);
+
+        }
+        const signUp1PhaseValidation = () => {
+            const emailPattern = /^[a-zA-Z0-9]*@([-.]?[a-zA-Z0-9])*\.[a-zA-Z]{2,4}$/;
+            const isEmailPattern = emailPattern.test(email);
+            if(!isEmailPattern){
+                setEmailError(true);
+                setEmailErrorMessage('이메일 주소 포맷이 맞지 않습니다.');
+            }
+            const isCheckedPassword = password.trim().length >= 8;
+            if(!isCheckedPassword){
+                setPasswordError(true);
+                setPasswordErrorMessage('비밀번호는 8자 이상 입력해주세요.');
+            }
+            const isEqualPassword = password === passwordCheck;
+            if(!isEqualPassword){
+                setPasswordCheckError(true);
+                setPasswordCheckErrorMessage('비밀번호가 일치하지 않습니다.');
+            }
+            if(!isEmailPattern || !isCheckedPassword || !isEqualPassword) {
+                if(page === 2) setPage(1);
+                return;
+            }
         }
 
         // * Render: Sign Up card Rendering
@@ -454,7 +505,7 @@ export default function Authentication() {
                             <>
                                 <div className='auth-consent-box'>
                                     <div className='auth-check-box' onClick={onAgreedPersonalClickHandler}>
-                                        <div className={`icon ${isAgreedPersonal ? 'check-round-fill-icon' : 'check-ring-light-icon'}`}></div>
+                                        <div className={`icon ${agreedPersonal ? 'check-round-fill-icon' : 'check-ring-light-icon'}`}></div>
                                     </div>
                                     <div className={isAgreedPersonalError ? 'auth-consent-title-error' : 'auth-consent-title' }>{'개인정보동의'}</div>
                                     <div className='auth-consent-link'>{`더보기 >`}</div>
