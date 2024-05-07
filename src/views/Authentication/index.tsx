@@ -446,6 +446,7 @@ export default function Authentication() {
             }
         }
 
+        // * effect : page modify effect
         useEffect(() => {
             if(page === 2){
                 if(!nicknameRef.current) return;
