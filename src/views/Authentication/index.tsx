@@ -1,4 +1,4 @@
-import React, {useState, KeyboardEvent, useRef, ChangeEvent} from 'react';
+import React, {useState, KeyboardEvent, useRef, ChangeEvent, useEffect} from 'react';
 import './style.css'
 import InputBox from "../../components/InputBox";
 import {useNavigate} from "react-router-dom";
@@ -286,7 +286,7 @@ export default function Authentication() {
         }
         // * Event Handler : password check button Event Handler
         const onPasswordCheckButtonClickHandler = () => {
-            if(passwordButtonIcon === 'eye-light-off-icon'){
+            if(passwordCheckButtonIcon === 'eye-light-off-icon'){
                 setPasswordCheckButtonIcon('eye-light-on-icon');
                 setPasswordCheckType('text');
             }else{
@@ -309,9 +309,7 @@ export default function Authentication() {
         // * event handler : password check key down event handler
         const onPasswordCheckKeyDownHandler = (event: KeyboardEvent<HTMLInputElement>) => {
             if(event.key !== 'Enter') return;
-            if(!nicknameRef.current) return;
             onNextButtonClickHandler();
-            nicknameRef.current.focus();
         }
         // * event handler : next button click evnet handler
         const onNextButtonClickHandler = () => {
@@ -363,6 +361,8 @@ export default function Authentication() {
         const onPostComplete = (data: Address) => {
             const { address } = data;
             setAddress(address);
+            setAddressError(false);
+            setAddressErrorMessage('');
             if(!addressDetailRef.current) return;
             addressDetailRef.current.focus();
 
@@ -445,6 +445,13 @@ export default function Authentication() {
                 return;
             }
         }
+
+        useEffect(() => {
+            if(page === 2){
+                if(!nicknameRef.current) return;
+                nicknameRef.current.focus();
+            }
+        }, [page]);
 
         // * Render: Sign Up card Rendering
         return (
