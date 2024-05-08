@@ -12,7 +12,6 @@ import { useCookies } from 'react-cookie';
 import {useLocation, useNavigate, useParams} from 'react-router-dom';
 import './style.css'
 import {useBoardStore, useLoginUserStore} from "../../stores";
-import loginUserStore from "../../stores/login-user.store";
 
 // * Component : Header Component
 export default function Header() {
@@ -22,32 +21,32 @@ export default function Header() {
     // * State : path State
     const { pathname } = useLocation();
     // * State : Cookie State
-    const [cookies, setCookies] = useCookies();
+    const [cookie, setCookie] = useCookies();
     // * State : Login State
     const [isLogin, setLogin] = useState<boolean>(false);
 
-    const isAuthPage = pathname.startsWith(AUTH_PATH());
-    const isMainPage = pathname === MAIN_PATH();
-    const isSearchPage = pathname.startsWith(SEARCH_PATH(''));
-    const isBoardDetailPage = pathname.startsWith(BOARD_PATH() + '/' + BOARD_DETAIL_PATH(''));
-    const isBoardWritePage = pathname.startsWith(BOARD_PATH() + '/' + BOARD_WRITE_PATH());
-    const isBoardUpdatePage = pathname.startsWith(BOARD_PATH() + '/' + BOARD_UPDATE_PATH(''));
-    const isUserPage = pathname.startsWith(USER_PATH(''));
+    // const isAuthPage = pathname.startsWith(AUTH_PATH());
+    // const isMainPage = pathname === MAIN_PATH();
+    // const isSearchPage = pathname.startsWith(SEARCH_PATH(''));
+    // const isBoardDetailPage = pathname.startsWith(BOARD_PATH() + '/' + BOARD_DETAIL_PATH(''));
+    // const isBoardWritePage = pathname.startsWith(BOARD_PATH() + '/' + BOARD_WRITE_PATH());
+    // const isBoardUpdatePage = pathname.startsWith(BOARD_PATH() + '/' + BOARD_UPDATE_PATH(''));
+    // const isUserPage = pathname.startsWith(USER_PATH(''));
 
-    // // * State : Auth Page State
-    // const [isAuthPage, setAuthPage] = useState<boolean>(false);
-    // // * State : Main Page State
-    // const [isMainPage, setMainPage] = useState<boolean>(false);
-    // // * State : Search Page State
-    // const [isSearchPage, setSearchPage] = useState<boolean>(false);
-    // // * State : Board Detail Page State
-    // const [isBoardDetailPage, setBoardDetailPage] = useState<boolean>(false);
-    // // * State : Board Write Page State
-    // const [isBoardWritePage, setBoardWritePage] = useState<boolean>(false);
-    // // * State : Board Update Page State
-    // const [isBoardUpdatePage, setBoardUpdatePage] = useState<boolean>(false);
-    // // * State : User Page State
-    // const [isUserPage, setUserPage] = useState<boolean>(false);
+    // * State : Auth Page State
+    const [isAuthPage, setAuthPage] = useState<boolean>(false);
+    // * State : Main Page State
+    const [isMainPage, setMainPage] = useState<boolean>(false);
+    // * State : Search Page State
+    const [isSearchPage, setSearchPage] = useState<boolean>(false);
+    // * State : Board Detail Page State
+    const [isBoardDetailPage, setBoardDetailPage] = useState<boolean>(false);
+    // * State : Board Write Page State
+    const [isBoardWritePage, setBoardWritePage] = useState<boolean>(false);
+    // * State : Board Update Page State
+    const [isBoardUpdatePage, setBoardUpdatePage] = useState<boolean>(false);
+    // * State : User Page State
+    const [isUserPage, setUserPage] = useState<boolean>(false);
 
     // * Function: 네비게이트 함수
     const navigate = useNavigate();
@@ -124,19 +123,18 @@ export default function Header() {
         // * State : user Email path variable State
         const { userEmail } = useParams();
 
-
         // * Event Handler : MyPage Button Click Event Handler
         const onMyPageButtonClickHandler = () => {
             if(!loginUser){
                 return;
             }
-
             const { email } = loginUser;
             navigate(USER_PATH(email));
         }
         // * Event Handler : Sign Out Button Click Event Handler
         const onSignOutButtonClickHandler = () => {
             resetLoginUser();
+            setCookie('accessToken', '', { path: MAIN_PATH(), expires: new Date() });
             navigate(MAIN_PATH());
         }
         // * Event Handler : Login Button Click Event Handler
@@ -188,23 +186,28 @@ export default function Header() {
         )
     }
 
-    // // * Effect : path modify Effect
-    // useEffect(() => {
-    //     const isAuthPage = pathname.startsWith(AUTH_PATH());
-    //     const isMainPage = pathname === MAIN_PATH();
-    //     const isSearchPage = pathname.startsWith(SEARCH_PATH(''));
-    //     const isBoardDetailPage = pathname.startsWith(BOARD_PATH() + '/' + BOARD_DETAIL_PATH(''));
-    //     const isBoardWritePage = pathname.startsWith(BOARD_PATH() + '/' + BOARD_WRITE_PATH());
-    //     const isBoardUpdatePage = pathname.startsWith(BOARD_PATH() + '/' + BOARD_UPDATE_PATH(''));
-    //     const isUserPage = pathname.startsWith(USER_PATH(''));
-    //     setAuthPage(isAuthPage);
-    //     setMainPage(isMainPage);
-    //     setSearchPage(isSearchPage);
-    //     setBoardDetailPage(isBoardDetailPage);
-    //     setBoardWritePage(isBoardWritePage);
-    //     setBoardUpdatePage(isBoardUpdatePage);
-    //     setUserPage(isUserPage);
-    // }, [pathname]);
+    // * Effect : path modify Effect
+    useEffect(() => {
+        const isAuthPage = pathname.startsWith(AUTH_PATH());
+        const isMainPage = pathname === MAIN_PATH();
+        const isSearchPage = pathname.startsWith(SEARCH_PATH(''));
+        const isBoardDetailPage = pathname.startsWith(BOARD_PATH() + '/' + BOARD_DETAIL_PATH(''));
+        const isBoardWritePage = pathname.startsWith(BOARD_PATH() + '/' + BOARD_WRITE_PATH());
+        const isBoardUpdatePage = pathname.startsWith(BOARD_PATH() + '/' + BOARD_UPDATE_PATH(''));
+        const isUserPage = pathname.startsWith(USER_PATH(''));
+        setAuthPage(isAuthPage);
+        setMainPage(isMainPage);
+        setSearchPage(isSearchPage);
+        setBoardDetailPage(isBoardDetailPage);
+        setBoardWritePage(isBoardWritePage);
+        setBoardUpdatePage(isBoardUpdatePage);
+        setUserPage(isUserPage);
+    }, [pathname]);
+
+    // * Effect : login user
+    useEffect(() => {
+        setLogin(loginUser !== null);
+    }, [loginUser])
 
     // * Render : Header Rendering
     return (
