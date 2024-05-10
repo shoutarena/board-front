@@ -4,8 +4,8 @@ import {SignInResponseDto, SignUpResponseDto} from "./response/auth";
 import ResponseDto from "./response/response.dto";
 import GetSignInUserResponseDto from "./response/user/get-sign-in-user.response.dto";
 import {PostBoardRequestDto} from "./request/board";
-import {BOARD_WRITE_PATH} from "../constant";
-import {PostBoardResponseDto} from "./response/board";
+import {IncreaseViewCountResponseDto, PostBoardResponseDto} from "./response/board";
+import GetBoardResponseDto from "./response/board/get-board.response.dto";
 
 const DOMAIN = 'http://localhost:8080';
 const API_DOMAIN = `${DOMAIN}/api/v1`;
@@ -60,7 +60,38 @@ export const getSignInUserRequest = async (accessToken: string) => {
     return result;
 }
 
+const GET_BOARD_URL = (boardIdx: number | string) => `${API_DOMAIN}/board/${boardIdx}`;
+const INCREASE_VIEW_COUNT_URL = (boardIdx: number | string) => `${API_DOMAIN}/board/${boardIdx}/increase-view-count`;
 const POST_BOARD_URL = () => `${API_DOMAIN}/board`;
+
+export const getBoardRequest = async (boardIdx: number | string) => {
+    const result = await axios.get(GET_BOARD_URL(boardIdx))
+        .then(response => {
+            const responseBody: GetBoardResponseDto = response.data;
+            return responseBody;
+        })
+        .catch(error => {
+            if(!error.response) return null;
+            const responseBody: ResponseDto = error.response.data;
+            return responseBody;
+        })
+
+    return result;
+}
+
+export const increaseViewCountRequest = async (boardIdx: number | string) => {
+    const result = await axios.patch(INCREASE_VIEW_COUNT_URL(boardIdx))
+        .then(response => {
+            const responseBody: IncreaseViewCountResponseDto = response.data;
+            return responseBody;
+        })
+        .catch(error => {
+            if(!error.response) return null;
+            const responseBody: ResponseDto = error.response.data;
+            return responseBody;
+        })
+    return result;
+}
 
 export const postBoardRequest = async (requestBody: PostBoardRequestDto, accessToken: string) => {
     const result = await axios.post(POST_BOARD_URL(), requestBody, authorization(accessToken))

@@ -1,4 +1,4 @@
-import React, {ChangeEvent, useEffect, useState} from 'react';
+import React, {ChangeEvent, useEffect, useRef, useState} from 'react';
 import './style.css'
 import {Board, CommentList, FavoriteList} from "types/interface";
 import Favorite from "components/Favorite";
@@ -10,7 +10,10 @@ import defaultProfileImage from 'assets/image/icon/default-profile-image.png';
 import {useLoginUserStore} from "stores";
 import {useNavigate, useParams} from "react-router-dom";
 import {BOARD_PATH, BOARD_UPDATE_PATH, MAIN_PATH, USER_PATH} from "constant";
-import {boardMock} from "mocks";
+import {getBoardRequest, increaseViewCountRequest} from "../../../apis";
+import {ResponseDto} from "../../../apis/response";
+import { GetBoardResponseDto } from 'apis/response/board';
+import {IncreaseViewCountResponseDto} from "../../../apis/response/board";
 
 
 // * Component : Board Detail Display Component
@@ -26,6 +29,8 @@ export default function BoardDetail() {
     // * Component : Board Detail Top Component
     const BoardDetailTop = () => {
 
+        // * state : 작성자 여부 상태
+        const [isWriter, setWriter] = useState<boolean>(false);
         const [board, setBoard] = useState<Board | null>();
 
         // * state : more button state
@@ -53,10 +58,33 @@ export default function BoardDetail() {
             // TODO : Delete Request
             navigator(MAIN_PATH());
         }
+        // * function : get board response process function
+        const getBoardResponse = (responseBody: GetBoardResponseDto | ResponseDto | null) => {
+            if(!responseBody) return;
+            const { code } = responseBody;
+            if(code === 'NB') alert('존재하지 않는 게시물입니다.');
+            if(code === 'DBE') alert('데이터베이스 오류입니다.');
+            if(code !== 'SU') {
+                navigator(MAIN_PATH());
+                return;
+            }
+            const board: Board = {...responseBody as GetBoardResponseDto};
+            setBoard(board);
+            if(!loginUser) {
+                setWriter(false);
+                return;
+            }
+            const isWriter = loginUser.email === board.writerEmail;
+            setWriter(isWriter);
+        }
         // * effect : 게시물 번호 path variable 이 바뀔때 마다 게시물 불러오기
         useEffect(() => {
-            setBoard(boardMock);
-            setShowMore(loginUser?.email === board?.writerEmail)
+            if(!boardIdx){
+                navigator(MAIN_PATH());
+                return;
+            }
+            getBoardRequest(boardIdx).then(getBoardResponse);
+            // setShowMore(loginUser?.email === board?.writerEmail)
         }, [boardIdx]);
         if(!board) return <></>;
         return (
@@ -70,9 +98,11 @@ export default function BoardDetail() {
                             <div className='board-detail-info-divider'>{`\|`}</div>
                             <div className='board-detail-write-date'>{board.regDt}</div>
                         </div>
-                        <div className='icon-button' onClick={onMoreButtonClickHandler}>
-                            <div className='icon more-icon'></div>
-                        </div>
+                        {isWriter &&
+                            <div className='icon-button' onClick={onMoreButtonClickHandler}>
+                                <div className='icon more-icon'></div>
+                            </div>
+                        }
                         {showMore &&
                             <div className='board-detail-more-box'>
                                 <div className='board-detail-update-button' onClick={onUpdateButtonClickHandler}>{'수정'}</div>
@@ -94,6 +124,8 @@ export default function BoardDetail() {
     // * Component : Board Detail Bottom Component
     const BoardDetailBottom = () => {
 
+        // * state : 댓글 textarea 참조 상태
+        const commentRef = useRef<HTMLTextAreaElement | null>(null);
         // * state : favorite list state
         const [favoriteList, setFavoriteList] = useState<FavoriteList[]>();
         // * state : comment list state
@@ -123,7 +155,13 @@ export default function BoardDetail() {
         const onCommentChangeHandler = (event:ChangeEvent<HTMLTextAreaElement>) => {
             const { value } = event.target;
             setComment(value);
-
+            if(!commentRef.current) return;
+            commentRef.current.style.height = 'auto';
+            commentRef.current.style.height = `${commentRef.current.scrollHeight}px`;
+        }
+        // * event handler : 댓글 작성 event handler
+        const onCommentSubmitClickHandler = () => {
+            if(!comment) return;
         }
 
         // * effect : 게시물 번호 path variable 이 바뀔때 마다 실행 좋아요 및 댓글 리스트 불러오기
@@ -179,9 +217,9 @@ export default function BoardDetail() {
                         </div>
                         <div className='board-detail-bottom-comment-input-box'>
                             <div className='board-detail-bottom-comment-input-container'>
-                                <textarea className='board-detail-bottom-comment-textarea' placeholder='댓글을 작성해주세요.' value={comment} onChange={onCommentChangeHandler}/>
+                                <textarea ref={commentRef} className='board-detail-bottom-comment-textarea' placeholder='댓글을 작성해주세요.' value={comment} onChange={onCommentChangeHandler}/>
                                 <div className='board-detail-bottom-comment-button-box'>
-                                    <div className={comment === '' ? 'disable-button' : 'black-button'}>{'댓글달기'}</div>
+                                    <div className={comment === '' ? 'disable-button' : 'black-button'} onClick={onCommentSubmitClickHandler}>{'댓글달기'}</div>
                                 </div>
                             </div>
                         </div>
@@ -190,6 +228,26 @@ export default function BoardDetail() {
             </div>
         );
     }
+
+    // * function : increase view count response process function
+    const increaseViewCountResponse = (responseBody: IncreaseViewCountResponseDto | ResponseDto | null) => {
+        if(!responseBody) return;
+        const { code } = responseBody;
+        if(code === 'NB') alert('존재하지 않는 게시물입니다.');
+        if(code === 'DBE') alert('데이터베이스 오류입니다.');
+    }
+    // * effect : 게시물 번호 path variable 바뀔때 마다 게시물 조회수 증가
+    let effectFlag = true;
+    useEffect(() => {
+        if(!boardIdx) return;
+        if(effectFlag){
+            effectFlag = false;
+            return;
+        }
+        increaseViewCountRequest(boardIdx).then(increaseViewCountResponse);
+
+
+    }, [boardIdx]);
 
     // * Render: Board Detail Display Rendering
     return (
