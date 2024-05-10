@@ -12,7 +12,7 @@ interface Props{
 export default function Favorite({favoriteList}: Props) {
 
     // * State: Properties
-    const {profileImage, nickname, email} = favoriteList;
+    const {profileImage, nickname} = favoriteList;
 
     // * Render: Favorite Rendering
     return (
