@@ -1,8 +1,8 @@
 import React from 'react';
 import './style.css'
-import insta from 'assets/image/insta.png'
-import logoLight from 'assets/image/logo-light.png'
-import naverBlog from 'assets/image/naver-blog.png'
+import insta from 'assets/image/icon/insta.png'
+import logoLight from 'assets/image/icon/logo-light.png'
+import naverBlog from 'assets/image/icon/naver-blog.png'
 
 /**
  * * Component: Footer Layout

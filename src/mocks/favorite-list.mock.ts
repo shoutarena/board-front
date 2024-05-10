@@ -20,6 +20,56 @@ const favoriteListMock : FavoriteList[] = [
         email: "email@email.com",
         nickname: "Lamie",
         profileImage: null
+    },
+    {
+        email: "email@email.com",
+        nickname: "Lamie",
+        profileImage: null
+    },
+    {
+        email: "email@email.com",
+        nickname: "Lamie",
+        profileImage: null
+    },
+    {
+        email: "email@email.com",
+        nickname: "Lamie",
+        profileImage: null
+    },
+    {
+        email: "email@email.com",
+        nickname: "Lamie",
+        profileImage: null
+    },
+    {
+        email: "email@email.com",
+        nickname: "Lamie",
+        profileImage: null
+    },
+    {
+        email: "email@email.com",
+        nickname: "Lamie",
+        profileImage: null
+    },
+    {
+        email: "email@email.com",
+        nickname: "Lamie",
+        profileImage: null
+    },
+    {
+        email: "email@email.com",
+        nickname: "Lamie",
+        profileImage: null
+    },
+    {
+        email: "email@email.com",
+        nickname: "Lamie",
+        profileImage: null
+    },
+    {
+        email: "email@email.com",
+        nickname: "Lamie",
+        profileImage: null
     }
 ];
 

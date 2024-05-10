@@ -1,6 +1,6 @@
 import React from 'react';
 import { CommentList } from 'types/interface';
-import defaultProfileImage from 'assets/image/default-profile-image.png'
+import defaultProfileImage from 'assets/image/icon/default-profile-image.png'
 import './style.css';
 
 // * interface: Comment Component Properties
