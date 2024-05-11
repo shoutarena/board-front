@@ -89,6 +89,14 @@
     justify-content: center;
 }
 
+.icon-box-small {
+    width: 16px;
+    height: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
 .icon-button {
     width: 24px;
     height: 24px;
@@ -121,6 +129,18 @@
 
 .expand-right-light-icon {
     background-image: url(assets/image/icon/expand-right-light.png);
+}
+
+.expand-left-light-icon {
+    background-image: url(assets/image/icon/expand-left-light.png);
+}
+
+.expand-right-icon {
+    background-image: url(assets/image/icon/expand-right.png);
+}
+
+.expand-left-icon {
+    background-image: url(assets/image/icon/expand-left.png);
 }
 
 .logo-light-icon {
