@@ -195,8 +195,8 @@ export default function BoardDetail() {
             if(!boardIdx || !loginUser || !cookies.accessToken || !comment) return;
             const requestBody: PostCommentRequestDto = {
                 content: comment
-            }
-            postCommentRequest(requestBody, boardIdx, cookies.accessToken).then(postCommentResponse)
+            };
+            postCommentRequest(requestBody, boardIdx, cookies.accessToken).then(postCommentResponse);
         }
         // * function : post comment response
         const postCommentResponse = (responseBody: PostCommentResponseDto | ResponseDto | null) => {
@@ -207,8 +207,8 @@ export default function BoardDetail() {
             if(code === 'NB') alert('존재하지 않는 게시물입니다.');
             if(code === 'AF') alert('인증에 실패했습니다.');
             if(code !== 'SU') return;
-            if(!boardIdx) return;
             setComment('');
+            if(!boardIdx) return;
             getCommentListRequest(boardIdx).then(getCommentListResponse);
 
         }
