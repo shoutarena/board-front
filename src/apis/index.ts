@@ -5,6 +5,7 @@ import ResponseDto from "./response/response.dto";
 import GetSignInUserResponseDto from "./response/user/get-sign-in-user.response.dto";
 import {PostBoardRequestDto, PostCommentRequestDto} from "./request/board";
 import {
+    DeleteBoardResponseDto,
     GetFavoriteListResponseDto,
     IncreaseViewCountResponseDto,
     PostBoardResponseDto,
@@ -74,6 +75,7 @@ const INCREASE_VIEW_COUNT_URL = (boardIdx: number | string) => `${API_DOMAIN}/bo
 const GET_FAVORITE_LIST_URL = (boardIdx: number | string) => `${API_DOMAIN}/board/${boardIdx}/favorite-list`;
 const GET_COMMENT_LIST_URL = (boardIdx: number| string) => `${API_DOMAIN}/board/${boardIdx}/comment-list`;
 const POST_BOARD_URL = () => `${API_DOMAIN}/board`;
+const DELETE_BOARD_URL = (boardIdx: number | string) => `${API_DOMAIN}/board/${boardIdx}`;
 const PUT_FAVORITE_URL = (boardIdx: number | string) => `${API_DOMAIN}/board/${boardIdx}/favorite`
 const POST_COMMENT_URL = (boardIdx: number | string) => `${API_DOMAIN}/board/${boardIdx}/comment`
 
@@ -133,7 +135,19 @@ export const getCommentListRequest = async (boardIdx: number | string) => {
         })
     return result;
 }
-
+export const deleteBoardRequest = async (boardIdx: number | string, accessToken: string) => {
+    const result = await axios.delete(DELETE_BOARD_URL(boardIdx), authorization(accessToken))
+        .then(response => {
+            const responseBody: DeleteBoardResponseDto = response.data;
+            return responseBody;
+        })
+        .catch(error => {
+            if(!error.response) return null;
+            const responseBody: ResponseDto = error.response.data;
+            return responseBody;
+        })
+    return result;
+}
 export const postBoardRequest = async (requestBody: PostBoardRequestDto, accessToken: string) => {
     const result = await axios.post(POST_BOARD_URL(), requestBody, authorization(accessToken))
         .then(response => {

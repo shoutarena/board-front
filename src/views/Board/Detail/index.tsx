@@ -13,11 +13,15 @@ import {
     getCommentListRequest,
     getFavoriteListRequest,
     increaseViewCountRequest, postCommentRequest,
-    putFavoriteRequest
+    putFavoriteRequest, deleteBoardRequest
 } from "../../../apis";
 import {ResponseDto} from "../../../apis/response";
 import {GetBoardResponseDto, GetCommentListResponseDto, GetFavoriteListResponseDto, PostCommentResponseDto} from 'apis/response/board';
-import {IncreaseViewCountResponseDto, PutFavoriteResponseDto} from "../../../apis/response/board";
+import {
+    DeleteBoardResponseDto,
+    IncreaseViewCountResponseDto,
+    PutFavoriteResponseDto
+} from "../../../apis/response/board";
 
 import dayjs from 'dayjs';
 import {useCookies} from "react-cookie";
@@ -63,11 +67,24 @@ export default function BoardDetail() {
         }
         // * event handler : delete button event handler
         const onDeleteButtonClickHandler = () => {
-            if(!board || !loginUser) return;
+            if(!board || !loginUser || !boardIdx || !cookies.accessToken) return;
             if(loginUser.email !== board.writerEmail) return;
-            // TODO : Delete Request
+            deleteBoardRequest(boardIdx, cookies.accessToken).then(deleteBoardResponse);
+        }
+        // * function : delete board response
+        const deleteBoardResponse = (responseBody: DeleteBoardResponseDto | ResponseDto | null) => {
+            if(!responseBody) return;
+            const { code } = responseBody;
+            if(code === 'VF') alert('잘못된 접근입니다.');
+            if(code === 'NM') alert('존재하지 않는 유저입니다.');
+            if(code === 'NB') alert('존재하지 않는 게시물입니다.');
+            if(code === 'AF') alert('인증에 실패했습니다.');
+            if(code === 'NP') alert('권한이 없습니다.');
+            if(code === 'DBE') alert('데이터베이스 오류입니다.');
+            if(code !== 'SU') return;
             navigator(MAIN_PATH());
         }
+
         // * function : 작성일 포멧 변경 함수
         const getWriteDatetimeFormat = () => {
             if(!board) return '';
@@ -210,7 +227,6 @@ export default function BoardDetail() {
             setComment('');
             if(!boardIdx) return;
             getCommentListRequest(boardIdx).then(getCommentListResponse);
-
         }
 
         // * function : 좋아요 목록 조회
