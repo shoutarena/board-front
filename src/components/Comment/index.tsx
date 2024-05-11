@@ -9,7 +9,7 @@ interface Props {
     commentList: CommentList;
 }
 
-// * Compponent: Comment List Component
+// * Component: Comment List Component
 export default function Comment({commentList}: Props) {
 
     // * State: Properties

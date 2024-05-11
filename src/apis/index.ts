@@ -4,7 +4,12 @@ import {SignInResponseDto, SignUpResponseDto} from "./response/auth";
 import ResponseDto from "./response/response.dto";
 import GetSignInUserResponseDto from "./response/user/get-sign-in-user.response.dto";
 import {PostBoardRequestDto} from "./request/board";
-import {GetFavoriteListResponseDto, IncreaseViewCountResponseDto, PostBoardResponseDto} from "./response/board";
+import {
+    GetFavoriteListResponseDto,
+    IncreaseViewCountResponseDto,
+    PostBoardResponseDto,
+    PutFavoriteResponseDto
+} from "./response/board";
 import GetBoardResponseDto from "./response/board/get-board.response.dto";
 import GetCommentListResponseDto from "./response/board/get-comment-list.response.dto";
 
@@ -66,6 +71,7 @@ const INCREASE_VIEW_COUNT_URL = (boardIdx: number | string) => `${API_DOMAIN}/bo
 const GET_FAVORITE_LIST_URL = (boardIdx: number | string) => `${API_DOMAIN}/board/${boardIdx}/favorite-list`;
 const GET_COMMENT_LIST_URL = (boardIdx: number| string) => `${API_DOMAIN}/board/${boardIdx}/comment-list`;
 const POST_BOARD_URL = () => `${API_DOMAIN}/board`;
+const PUT_FAVORITE_URL = (boardIdx: number | string) => `${API_DOMAIN}/board/${boardIdx}/favorite`
 
 export const getBoardRequest = async (boardIdx: number | string) => {
     const result = await axios.get(GET_BOARD_URL(boardIdx))
@@ -135,6 +141,20 @@ export const postBoardRequest = async (requestBody: PostBoardRequestDto, accessT
             const responseBody: ResponseDto = error.response.data;
             return responseBody;
         })
+    return result;
+}
+
+export const putFavoriteRequest = async (boardIdx: number | string, accessToken: string) => {
+    const result = await axios.put(PUT_FAVORITE_URL(boardIdx), authorization(accessToken))
+        .then(response => {
+            const responseBody: PostBoardResponseDto = response.data;
+            return responseBody;
+        })
+        .catch(error => {
+            if(!error.response) return null;
+            const responseBody: ResponseDto = error.response.data;
+            return responseBody;
+        });
     return result;
 }
 
