@@ -17,7 +17,7 @@ export default function Comment({commentList}: Props) {
 
     // * function : 작성일 경과시간 함수
     const getElapsedTime = () => {
-        const now = dayjs().add(9, 'hour');
+        const now = dayjs().add(0, 'hour');
         const writeTime = dayjs(regDt);
         const gap = now.diff(writeTime, 's');
         if(gap < 60) return `${gap}초 전`;

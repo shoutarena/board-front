@@ -12,15 +12,16 @@ import {
     getBoardRequest,
     getCommentListRequest,
     getFavoriteListRequest,
-    increaseViewCountRequest,
+    increaseViewCountRequest, postCommentRequest,
     putFavoriteRequest
 } from "../../../apis";
 import {ResponseDto} from "../../../apis/response";
-import {GetBoardResponseDto, GetCommentListResponseDto, GetFavoriteListResponseDto} from 'apis/response/board';
+import {GetBoardResponseDto, GetCommentListResponseDto, GetFavoriteListResponseDto, PostCommentResponseDto} from 'apis/response/board';
 import {IncreaseViewCountResponseDto, PutFavoriteResponseDto} from "../../../apis/response/board";
 
 import dayjs from 'dayjs';
 import {useCookies} from "react-cookie";
+import {PostCommentRequestDto} from "../../../apis/request/board";
 
 
 // * Component : Board Detail Display Component
@@ -191,7 +192,25 @@ export default function BoardDetail() {
         }
         // * event handler : 댓글 작성 event handler
         const onCommentSubmitClickHandler = () => {
-            if(!comment) return;
+            if(!boardIdx || !loginUser || !cookies.accessToken || !comment) return;
+            const requestBody: PostCommentRequestDto = {
+                content: comment
+            }
+            postCommentRequest(requestBody, boardIdx, cookies.accessToken).then(postCommentResponse)
+        }
+        // * function : post comment response
+        const postCommentResponse = (responseBody: PostCommentResponseDto | ResponseDto | null) => {
+            if(!responseBody) return;
+            const { code } = responseBody;
+            if(code === 'VF') alert('잘못된 접근입니다.');
+            if(code === 'NM') alert('존재하지 않는 유저입니다.');
+            if(code === 'NB') alert('존재하지 않는 게시물입니다.');
+            if(code === 'AF') alert('인증에 실패했습니다.');
+            if(code !== 'SU') return;
+            if(!boardIdx) return;
+            setComment('');
+            getCommentListRequest(boardIdx).then(getCommentListResponse);
+
         }
 
         // * function : 좋아요 목록 조회

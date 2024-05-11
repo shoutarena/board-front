@@ -3,7 +3,7 @@ import {SignInRequestDto, SignUpRequestDto} from "./request/auth";
 import {SignInResponseDto, SignUpResponseDto} from "./response/auth";
 import ResponseDto from "./response/response.dto";
 import GetSignInUserResponseDto from "./response/user/get-sign-in-user.response.dto";
-import {PostBoardRequestDto} from "./request/board";
+import {PostBoardRequestDto, PostCommentRequestDto} from "./request/board";
 import {
     GetFavoriteListResponseDto,
     IncreaseViewCountResponseDto,
@@ -12,6 +12,9 @@ import {
 } from "./response/board";
 import GetBoardResponseDto from "./response/board/get-board.response.dto";
 import GetCommentListResponseDto from "./response/board/get-comment-list.response.dto";
+import {Simulate} from "react-dom/test-utils";
+import error = Simulate.error;
+import PostCommentResponseDto from "./response/board/post-comment.response.dto";
 
 const DOMAIN = 'http://localhost:8080';
 const API_DOMAIN = `${DOMAIN}/api/v1`;
@@ -72,6 +75,7 @@ const GET_FAVORITE_LIST_URL = (boardIdx: number | string) => `${API_DOMAIN}/boar
 const GET_COMMENT_LIST_URL = (boardIdx: number| string) => `${API_DOMAIN}/board/${boardIdx}/comment-list`;
 const POST_BOARD_URL = () => `${API_DOMAIN}/board`;
 const PUT_FAVORITE_URL = (boardIdx: number | string) => `${API_DOMAIN}/board/${boardIdx}/favorite`
+const POST_COMMENT_URL = (boardIdx: number | string) => `${API_DOMAIN}/board/${boardIdx}/comment`
 
 export const getBoardRequest = async (boardIdx: number | string) => {
     const result = await axios.get(GET_BOARD_URL(boardIdx))
@@ -148,6 +152,19 @@ export const putFavoriteRequest = async (boardIdx: number | string, accessToken:
     const result = await axios.put(PUT_FAVORITE_URL(boardIdx), authorization(accessToken))
         .then(response => {
             const responseBody: PostBoardResponseDto = response.data;
+            return responseBody;
+        })
+        .catch(error => {
+            if(!error.response) return null;
+            const responseBody: ResponseDto = error.response.data;
+            return responseBody;
+        });
+    return result;
+}
+export const postCommentRequest = async (requestBody: PostCommentRequestDto, boardIdx:number | string, accessToken: string) => {
+    const result = await axios.post(POST_COMMENT_URL(boardIdx), requestBody, authorization(accessToken))
+        .then(response => {
+            const responseBody: PostCommentResponseDto = response.data;
             return responseBody;
         })
         .catch(error => {
