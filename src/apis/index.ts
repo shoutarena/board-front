@@ -6,8 +6,12 @@ import GetSignInUserResponseDto from "./response/user/get-sign-in-user.response.
 import {PatchBoardRequestDto, PostBoardRequestDto, PostCommentRequestDto} from "./request/board";
 import {
     DeleteBoardResponseDto,
-    GetFavoriteListResponseDto, GetLatestBoardListResponseDto, GetTop3BoardListResponseDto,
-    IncreaseViewCountResponseDto, PatchBoardResponseDto,
+    GetFavoriteListResponseDto,
+    GetLatestBoardListResponseDto,
+    GetSearchBoardListResponseDto,
+    GetTop3BoardListResponseDto,
+    IncreaseViewCountResponseDto,
+    PatchBoardResponseDto,
     PostBoardResponseDto,
     PutFavoriteResponseDto
 } from "./response/board";
@@ -15,7 +19,7 @@ import GetBoardResponseDto from "./response/board/get-board.response.dto";
 import GetCommentListResponseDto from "./response/board/get-comment-list.response.dto";
 import {Simulate} from "react-dom/test-utils";
 import PostCommentResponseDto from "./response/board/post-comment.response.dto";
-import {GetPopularListResponseDto} from "./response/search";
+import {GetPopularListResponseDto, GetRelationListResponseDto} from "./response/search";
 
 const DOMAIN = 'http://localhost:8080';
 const API_DOMAIN = `${DOMAIN}/api/v1`;
@@ -81,6 +85,21 @@ const PUT_FAVORITE_URL = (boardIdx: number | string) => `${API_DOMAIN}/board/${b
 const POST_COMMENT_URL = (boardIdx: number | string) => `${API_DOMAIN}/board/${boardIdx}/comment`
 const GET_LATEST_BOARD_LIST_URL = () => `${API_DOMAIN}/board/latest-list`;
 const GET_TOP3_LIST_URL = () => `${API_DOMAIN}/board/top-3`;
+const GET_SEARCH_BOARD_LIST_URL = (searchWord:string, preSearchWord:string | null) => `${API_DOMAIN}/board/search-list/${searchWord}${preSearchWord ? '/' + preSearchWord : ''}`;
+
+export const getSearchBoardListRequest = async (searchWord: string, preSearchWord: string | null) => {
+    const result = axios.get(GET_SEARCH_BOARD_LIST_URL(searchWord, preSearchWord))
+        .then(response => {
+            const responseBody: GetSearchBoardListResponseDto = response.data;
+            return responseBody;
+        })
+        .catch(error => {
+            if(!error.response) return null;
+            const responseBody: ResponseDto = error.response.data;
+            return responseBody;
+        });
+    return result
+}
 
 export const getLatestBoardListRequest = async () => {
     const result = await axios.get(GET_LATEST_BOARD_LIST_URL())
@@ -236,6 +255,22 @@ export const postCommentRequest = async (requestBody: PostCommentRequestDto, boa
 
 const SEARCH_URL = `${API_DOMAIN}/search`;
 const GET_POPULAR_WORD_LIST_URL = () => `${SEARCH_URL}/popular-list`;
+const GET_RELATION_WORD_LIST_URL = (searchWord: string) => `${SEARCH_URL}/${searchWord}/relation-list`;
+
+export const getRelationWordListRequest = async (searchWord: string) => {
+    const result = await axios.get(GET_RELATION_WORD_LIST_URL(searchWord))
+        .then(response => {
+            const responseBody: GetRelationListResponseDto = response.data;
+            return responseBody;
+        })
+        .catch(error => {
+            if(!error.response) return null;
+            const responseBody: ResponseDto = error.response.data;
+            return responseBody;
+        });
+    return result;
+}
+
 export const getPopularWordListRequest = async () => {
     const result = await axios.get(GET_POPULAR_WORD_LIST_URL())
         .then(response => {
