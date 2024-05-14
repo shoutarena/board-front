@@ -29,9 +29,9 @@ export default function Authentication() {
         // * Ref State : password state
         const passwordRef = useRef<HTMLInputElement | null>(null);
         // * State : email state
-        const [email, setEmail] = useState<string>('');
+        const [email, setEmail] = useState<string>('email@email.com');
         // * State : password state
-        const [password, setPassword] = useState<string>('');
+        const [password, setPassword] = useState<string>('1q2w3e4r');
         // * State : password Type state
         const [passwordType, setPasswordType] = useState<'text' | 'password'>('password');
         // * State : password Button Icon state

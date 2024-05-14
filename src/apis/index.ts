@@ -3,11 +3,11 @@ import {SignInRequestDto, SignUpRequestDto} from "./request/auth";
 import {SignInResponseDto, SignUpResponseDto} from "./response/auth";
 import ResponseDto from "./response/response.dto";
 import GetSignInUserResponseDto from "./response/user/get-sign-in-user.response.dto";
-import {PostBoardRequestDto, PostCommentRequestDto} from "./request/board";
+import {PatchBoardRequestDto, PostBoardRequestDto, PostCommentRequestDto} from "./request/board";
 import {
     DeleteBoardResponseDto,
     GetFavoriteListResponseDto,
-    IncreaseViewCountResponseDto,
+    IncreaseViewCountResponseDto, PatchBoardResponseDto,
     PostBoardResponseDto,
     PutFavoriteResponseDto
 } from "./response/board";
@@ -75,6 +75,7 @@ const INCREASE_VIEW_COUNT_URL = (boardIdx: number | string) => `${API_DOMAIN}/bo
 const GET_FAVORITE_LIST_URL = (boardIdx: number | string) => `${API_DOMAIN}/board/${boardIdx}/favorite-list`;
 const GET_COMMENT_LIST_URL = (boardIdx: number| string) => `${API_DOMAIN}/board/${boardIdx}/comment-list`;
 const POST_BOARD_URL = () => `${API_DOMAIN}/board`;
+const PATCH_BOARD_URL = (boardIdx: number | string) => `${API_DOMAIN}/board/${boardIdx}`;
 const DELETE_BOARD_URL = (boardIdx: number | string) => `${API_DOMAIN}/board/${boardIdx}`;
 const PUT_FAVORITE_URL = (boardIdx: number | string) => `${API_DOMAIN}/board/${boardIdx}/favorite`
 const POST_COMMENT_URL = (boardIdx: number | string) => `${API_DOMAIN}/board/${boardIdx}/comment`
@@ -159,6 +160,20 @@ export const postBoardRequest = async (requestBody: PostBoardRequestDto, accessT
             const responseBody: ResponseDto = error.response.data;
             return responseBody;
         })
+    return result;
+}
+
+export const patchBoardRequest = async (requestBody: PatchBoardRequestDto, boardIdx:number | string, accessToken: string, ) => {
+    const result = await axios.patch(PATCH_BOARD_URL(boardIdx), requestBody, authorization(accessToken))
+        .then(response => {
+            const responseBody: PatchBoardResponseDto = response.data;
+            return responseBody;
+        })
+        .catch(error => {
+            if(!error.response) return null;
+            const responseBody: ResponseDto = error.response.data;
+            return responseBody;
+        });
     return result;
 }
 

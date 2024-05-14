@@ -12,9 +12,9 @@ import { useCookies } from 'react-cookie';
 import {Form, useLocation, useNavigate, useParams} from 'react-router-dom';
 import './style.css'
 import {useBoardStore, useLoginUserStore} from "../../stores";
-import {fileUploadRequest, postBoardRequest} from "../../apis";
-import {PostBoardRequestDto} from "../../apis/request/board";
-import {PostBoardResponseDto} from "../../apis/response/board";
+import {fileUploadRequest, patchBoardRequest, postBoardRequest} from "../../apis";
+import {PatchBoardRequestDto, PostBoardRequestDto} from "../../apis/request/board";
+import {PatchBoardResponseDto, PostBoardResponseDto} from "../../apis/response/board";
 import {ResponseDto} from "../../apis/response";
 
 // * Component : Header Component
@@ -53,11 +53,11 @@ export default function Header() {
     const [isUserPage, setUserPage] = useState<boolean>(false);
 
     // * Function: 네비게이트 함수
-    const navigate = useNavigate();
+    const navigator = useNavigate();
 
     // * Event Handler: 로고 클릭 Event Handler
     const onLogoClick = () => {
-        navigate(MAIN_PATH());
+        navigator(MAIN_PATH());
     }
     
     // * Component : Search Button Component
@@ -89,7 +89,7 @@ export default function Header() {
                 setStatus(!status);
                 return;
             }
-            navigate(SEARCH_PATH(word))
+            navigator(SEARCH_PATH(word))
         }
         
         // * Effect : 검색어  path variable 변경 될때 마다 실행될 함수
@@ -133,17 +133,17 @@ export default function Header() {
                 return;
             }
             const { email } = loginUser;
-            navigate(USER_PATH(email));
+            navigator(USER_PATH(email));
         }
         // * Event Handler : Sign Out Button Click Event Handler
         const onSignOutButtonClickHandler = () => {
             resetLoginUser();
             setCookies('accessToken', '', { path: MAIN_PATH(), expires: new Date() });
-            navigate(MAIN_PATH());
+            navigator(MAIN_PATH());
         }
         // * Event Handler : Login Button Click Event Handler
         const onSignInButtonEventHandler = () => {
-            navigate(AUTH_PATH());
+            navigator(AUTH_PATH());
         }
 
         // * Render :  Logout Button Rendering
@@ -169,6 +169,8 @@ export default function Header() {
     // * Component : Upload Button Component
     const UploadButton = () => {
 
+        // * state : board idx state
+        const { boardIdx } = useParams();
         // * State : Board State
         const { title, content, boardImageFileList, resetBoard } = useBoardStore();
 
@@ -178,7 +180,7 @@ export default function Header() {
             if(!responseBody) return;
 
             const { code } = responseBody;
-            if(code === 'AF' || code === 'NM') navigate(AUTH_PATH());
+            if(code === 'AF' || code === 'NM') navigator(AUTH_PATH());
             if(code === 'VF') alert('제목과 내용은 필수 입니다.');
             if(code === 'DBE') alert('데이터베이스 오류입니다.');
             if(code !== 'SU') return;
@@ -187,7 +189,21 @@ export default function Header() {
 
             if(!loginUser) return;
             const { email } = loginUser;
-            navigate(USER_PATH(email));
+            navigator(USER_PATH(email));
+        }
+
+        // * function : patch board response
+        const patchBoardResponse = (responseBody: PatchBoardResponseDto | ResponseDto | null) => {
+            if(!responseBody) return;
+            const { code } = responseBody;
+            if(code === 'AF' || code === 'NM' || code === 'NB' || code === 'NP') navigator(AUTH_PATH());
+            if(code === 'VF') alert('제목과 내용은 필수 입니다.');
+            if(code === 'DBE') alert('데이터베이스 오류입니다.');
+            if(code !== 'SU') return;
+
+            if(!boardIdx) return;
+            navigator(BOARD_PATH() + '/' + BOARD_DETAIL_PATH(boardIdx));
+
         }
 
         // * Event Handler : Upload Button Click Event Handler
@@ -206,13 +222,29 @@ export default function Header() {
                 if(url) boardImageList.push(url);
             }
 
-            const requestBody: PostBoardRequestDto = {
-                title: title,
-                content: content,
-                boardImageList: boardImageList
-            };
+            if(isBoardWritePage){
+                const requestBody: PostBoardRequestDto = {
+                    title: title,
+                    content: content,
+                    boardImageList: boardImageList
+                };
 
-            postBoardRequest(requestBody, accessToken).then(postBoardResponse);
+                postBoardRequest(requestBody, accessToken).then(postBoardResponse);
+                return;
+            }
+
+            if(isBoardUpdatePage){
+                if(!boardIdx) return;
+                const requestBody: PatchBoardRequestDto = {
+                    title: title,
+                    content: content,
+                    boardImageList: boardImageList
+                };
+
+                patchBoardRequest(requestBody, boardIdx, accessToken).then(patchBoardResponse);
+                return;
+            }
+
 
         }
 

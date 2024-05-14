@@ -51,7 +51,7 @@ function App() {
             return;
         }
         getSignInUserRequest(cookies.accessToken)
-            .then(getSignInUserResponse)
+            .then(getSignInUserResponse);
     }, [cookies.accessToken]);
 
     // * Render : Application Component Rendering
