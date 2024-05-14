@@ -5,9 +5,18 @@ import Board from "../../components/Board";
 import { BoardList } from 'types/interface';
 import {latestBoardListMock, top3BoardListMock } from 'mocks';
 import Pagination from 'components/Pagination';
+import {useNavigate} from "react-router-dom";
+import {SEARCH_PATH} from "../../constant";
+import {getLatestBoardListRequest, getPopularWordListRequest, getTop3BoardListRequest} from "../../apis";
+import {GetLatestBoardListResponseDto, GetTop3BoardListResponseDto} from "../../apis/response/board";
+import {ResponseDto} from "../../apis/response";
+import {GetPopularListResponseDto} from "../../apis/response/search";
 
 // * Component : Main Display Component
 export default function Main() {
+
+    // function : navigator function
+    const navigator = useNavigate();
 
     // component : 메인 화면 상단 컴포넌트
     const MainTop = () => {
@@ -15,9 +24,19 @@ export default function Main() {
         // * state : 주간 top 3 게시물 리스트 상태
         const [top3BoardList, setTop3BoardList] = useState<BoardList[]>([]);
 
+        // * function : get top3 board list response
+        const getTop3BoardListResponse = (responseBody: GetTop3BoardListResponseDto | ResponseDto | null) => {
+            if(!responseBody) return;
+            const { code } = responseBody;
+            if(code === 'DBE') alert('데이터베이스 오류입니다.');
+            if(code !== 'SU') return;
+            const { top3List } = responseBody as GetTop3BoardListResponseDto;
+            setTop3BoardList(top3List);
+        }
+
         // * effect : 첫 마운트 시 실행될 함수
         useEffect(() => {
-            setTop3BoardList(top3BoardListMock);
+            getTop3BoardListRequest().then(getTop3BoardListResponse);
         }, [])
         return (
             <div id='main-top-wrapper'>
@@ -40,10 +59,34 @@ export default function Main() {
         const [currentBoardList, setCurrentBoardList] = useState<BoardList[]>([]);
         // * state : 인기 검색어 리스트 상태
         const [popularWordList, setPopularWordList] = useState<string[]>([]);
+
+        // * event handler : 인기 검색어 클릭 이벤트 처리
+        const onPopularWordClickHandler = (word: string) => {
+            navigator(SEARCH_PATH(word));
+        }
+
+        // * function : get latest board list response
+        const getLatestBoardListResponse = (responseBody: GetLatestBoardListResponseDto | ResponseDto | null) => {
+            if(!responseBody) return;
+            const { code } = responseBody;
+            if(code === 'DBE') alert('데이터베이스 오류입니다.');
+            if(code !== 'SU') return;
+            const { latestList } = responseBody as GetLatestBoardListResponseDto;
+            setCurrentBoardList(latestList);
+        }
+        // * function : get latest board list response
+        const getPopularWordListResponse = (responseBody: GetPopularListResponseDto | ResponseDto | null) => {
+            if(!responseBody) return;
+            const { code } = responseBody;
+            if(code === 'DBE') alert('데이터베이스 오류입니다.');
+            if(code !== 'SU') return;
+            const { popularWordList } = responseBody as GetPopularListResponseDto;
+            setPopularWordList(popularWordList);
+        }
         // * effect : 첫 마운트 시 실행될 함수
         useEffect(() => {
-            setCurrentBoardList(latestBoardListMock);
-            setPopularWordList(['안녕', '잘가', '또봐']);
+            getLatestBoardListRequest().then(getLatestBoardListResponse);
+            getPopularWordListRequest().then(getPopularWordListResponse);
         }, []);
         return (
             <div id='main-bottom-wrapper'>
@@ -58,7 +101,7 @@ export default function Main() {
                                 <div className='main-bottom-popular-card-container'>
                                     <div className='main-bottom-popular-card-title'>{'인기 검색어'}</div>
                                     <div className='main-bottom-popular-card-contents'>
-                                        {popularWordList.map(word => <div className='word-badge'>{word}</div>)}
+                                        {popularWordList.map(word => <div className='word-badge' onClick={() => onPopularWordClickHandler(word)}>{word}</div>)}
                                     </div>
                                 </div>
                             </div>

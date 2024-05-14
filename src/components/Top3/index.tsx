@@ -3,6 +3,7 @@ import './style.css';
 import defaultProfileImage from 'assets/image/icon/default-profile-image.png';
 import { BoardList } from 'types/interface';
 import { useNavigate } from 'react-router-dom';
+import {BOARD_DETAIL_PATH, BOARD_PATH} from "../../constant";
 
 // * interface: Top3 Component Properties
 interface Props {
@@ -18,11 +19,11 @@ export default function Top3({ top3List }: Props) {
     const { regDt, nickname, profileImage } = top3List;
 
     // * Function: 네비게이트 함수
-    // const navigator = useNavigate();
+    const navigator = useNavigate();
 
     // * Event Handler : 게시물 아이템 클릭 이벤트 처리 함수
     const onClickHandler = () => {
-        // navigator(boardIdx);
+        navigator(BOARD_PATH() + '/' + BOARD_DETAIL_PATH(boardIdx));
     }
 
     // * Render: Top 3 List Item Rendering
