@@ -14,7 +14,6 @@ import {
 import GetBoardResponseDto from "./response/board/get-board.response.dto";
 import GetCommentListResponseDto from "./response/board/get-comment-list.response.dto";
 import {Simulate} from "react-dom/test-utils";
-import error = Simulate.error;
 import PostCommentResponseDto from "./response/board/post-comment.response.dto";
 import {GetPopularListResponseDto} from "./response/search";
 
@@ -235,7 +234,7 @@ export const postCommentRequest = async (requestBody: PostCommentRequestDto, boa
     return result;
 }
 
-const SEARCH_URL = `${DOMAIN}/search`;
+const SEARCH_URL = `${API_DOMAIN}/search`;
 const GET_POPULAR_WORD_LIST_URL = () => `${SEARCH_URL}/popular-list`;
 export const getPopularWordListRequest = async () => {
     const result = await axios.get(GET_POPULAR_WORD_LIST_URL())

@@ -46,7 +46,7 @@ export default function Main() {
                     <div className='main-top-contents-box'>
                         <div className='main-top-contents-title'>{'주간 TOP 3 게시글'}</div>
                         <div className='main-top-contents'>
-                            {top3BoardList.map(top3Board => <Top3 top3List={top3Board} />)}
+                            {top3BoardList.map(top3Board => <Top3 key={top3Board.boardIdx} top3List={top3Board} />)}
                         </div>
                     </div>
                 </div>
@@ -97,7 +97,7 @@ export default function Main() {
                     <div className='main-bottom-title'>{'최신 게시물'}</div>
                     <div className='main-bottom-contents-box'>
                         <div className='main-bottom-current-contents'>
-                            {viewList?.map(board => <Board boardList={board} />)}
+                            {viewList?.map(board => <Board key={board.boardIdx} boardList={board} />)}
                         </div>
                         <div className='main-bottom-popular-box'>
                             <div className='main-bottom-popular-card'>
