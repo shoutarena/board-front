@@ -11,6 +11,7 @@ import {getLatestBoardListRequest, getPopularWordListRequest, getTop3BoardListRe
 import {GetLatestBoardListResponseDto, GetTop3BoardListResponseDto} from "../../apis/response/board";
 import {ResponseDto} from "../../apis/response";
 import {GetPopularListResponseDto} from "../../apis/response/search";
+import {usePagination} from "../../hooks";
 
 // * Component : Main Display Component
 export default function Main() {
@@ -55,8 +56,10 @@ export default function Main() {
     // component : 메인 하단 상단 컴포넌트
     const MainBottom = () => {
 
-        // * state : 최신 게시물 리스트 상태
-        const [currentBoardList, setCurrentBoardList] = useState<BoardList[]>([]);
+        // * state: pagination 관련 상태
+        const {currentPage, setCurrentPage, currentSection, setCurrentSection, viewList, viewPageList, totalSection, setTotalList} = usePagination<BoardList>(5);
+        // // * state : 최신 게시물 리스트 상태
+        // const [currentBoardList, setCurrentBoardList] = useState<BoardList[]>([]);
         // * state : 인기 검색어 리스트 상태
         const [popularWordList, setPopularWordList] = useState<string[]>([]);
 
@@ -72,7 +75,7 @@ export default function Main() {
             if(code === 'DBE') alert('데이터베이스 오류입니다.');
             if(code !== 'SU') return;
             const { latestList } = responseBody as GetLatestBoardListResponseDto;
-            setCurrentBoardList(latestList);
+            setTotalList(latestList);
         }
         // * function : get latest board list response
         const getPopularWordListResponse = (responseBody: GetPopularListResponseDto | ResponseDto | null) => {
@@ -94,7 +97,7 @@ export default function Main() {
                     <div className='main-bottom-title'>{'최신 게시물'}</div>
                     <div className='main-bottom-contents-box'>
                         <div className='main-bottom-current-contents'>
-                            {currentBoardList.map(board => <Board boardList={board} />)}
+                            {viewList?.map(board => <Board boardList={board} />)}
                         </div>
                         <div className='main-bottom-popular-box'>
                             <div className='main-bottom-popular-card'>
@@ -108,7 +111,7 @@ export default function Main() {
                         </div>
                     </div>
                     <div className='main-bottom-pagination-box'>
-                        {/*<Pagination viewPageList={} totalSection={} setCurrentSection={} setCurrentPage={} currentSection={} currentPage={} />*/}
+                        <Pagination viewPageList={viewPageList} totalSection={totalSection} setCurrentSection={setCurrentSection} setCurrentPage={setCurrentPage} currentSection={currentSection} currentPage={currentPage} />
                     </div>
                 </div>
             </div>
