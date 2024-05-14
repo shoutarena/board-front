@@ -111,7 +111,7 @@ export default function Header() {
         // * Render : SearchButton Rendering(Click True State)
         return (
             <div className='header-search-input-box'>
-                <input className='header-search-input' type='text' placeholder='검색어를 입력해주세요.' value={searchWord} 
+                <input className='header-search-input' type='text' placeholder='검색어를 입력해주세요.' value={word}
                        onChange={onSearchWordChangeHandler} onKeyDown={onSearchWordKeyDownHandler}/>
                 <div ref={searchButtonRef} className='icon-button' onClick={onSearchButtonHandler}>
                     <div className='icon search-light-icon'></div>

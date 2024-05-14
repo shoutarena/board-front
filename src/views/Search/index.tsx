@@ -27,7 +27,7 @@ export default function Search() {
     // * function : navigator
     const navigator = useNavigate();
     // * state : 관련 검색어 리스트 상태
-    const [relationList, setRelationList] = useState<string[]>([]);
+    const [relationWordList, setRelationWordList] = useState<string[]>([]);
 
     // * event handler : 관련 검색어 클릭 이벤트 처리
     const onRelationWordClickHandler = (word: string) => {
@@ -54,7 +54,7 @@ export default function Search() {
         if(code === 'DBE') alert('데이터베이스 오류입니다.');
         if(code !== 'SU') return;
         const { relativeWordList } = responseBody as GetRelationListResponseDto;
-        setRelationList(relativeWordList);
+        setRelationWordList(relativeWordList);
     }
 
     useEffect(() => {
@@ -80,8 +80,8 @@ export default function Search() {
                        <div className='search-relation-card'>
                            <div className='search-relation-card-container'>
                                <div className='search-relation-card-title'>{'관련 검색어'}</div>
-                               {relationList.length > 0 ?
-                                   <div className='search-relation-card-contents'>{relationList.map((word,index) => <div className='word-badge' key={index} onClick={() => onRelationWordClickHandler(word)}>{word}</div>)}</div> :
+                               {relationWordList.length > 0 ?
+                                   <div className='search-relation-card-contents'>{relationWordList.map((word,index) => <div className='word-badge' key={index} onClick={() => onRelationWordClickHandler(word)}>{word}</div>)}</div> :
                                    <div className='search-relation-card-contents-nothing'>{'관련 검색어가 없습니다.'}</div>
                                }
                            </div>
