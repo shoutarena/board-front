@@ -104,7 +104,7 @@ export default function Main() {
                                 <div className='main-bottom-popular-card-container'>
                                     <div className='main-bottom-popular-card-title'>{'인기 검색어'}</div>
                                     <div className='main-bottom-popular-card-contents'>
-                                        {popularWordList.map(word => <div className='word-badge' onClick={() => onPopularWordClickHandler(word)}>{word}</div>)}
+                                        {popularWordList.map((word, index) => <div key={index} className='word-badge' onClick={() => onPopularWordClickHandler(word)}>{word}</div>)}
                                     </div>
                                 </div>
                             </div>

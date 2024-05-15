@@ -1,5 +1,6 @@
 #search-wrapper {
     padding: 40px 0;
+    min-height: 1080px;
     display: flex;
     justify-content: center;
     background-color: rgba(0, 0, 0, 0.05);
